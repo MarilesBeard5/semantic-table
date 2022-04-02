@@ -1,0 +1,132 @@
+:global(#root) {
+	.IconButton {
+		background-color: transparent;
+		color: #1E56AA;
+	}
+
+   .IconLabel {
+      background-color: transparent;
+   }
+   .Bordered {
+      border:0.15em solid #1E56AA;
+      box-sizing: border-box;
+      text-decoration:none;
+   }
+
+   .nonBordered {
+      border: 0 none;
+      box-sizing: border-box;
+      text-decoration: none;
+   }
+
+	.Sticky {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+	}
+
+	.growOnHover {
+		-webkit-transition: all 130ms ease-in-out;
+		-moz-transition: all 130ms ease-in-out;
+		-o-transition: all 130ms ease-in-out;
+		transition: all 130ms ease-in-out;
+		&:hover {
+			transform: scale(1.08);
+			-webkit-transform: scale(1.08);
+			-moz-transform: scale(1.08);
+			-o-transform: scale(1.08);
+		}
+	}
+
+	.shrinkOnHover {
+		-webkit-transition: all 130ms ease-in-out;
+		-moz-transition: all 130ms ease-in-out;
+		-o-transition: all 130ms ease-in-out;
+		transition: all 130ms ease-in-out;
+		&:hover {
+			transform: scale(0.95);
+			-webkit-transform: scale(0.95);
+			-moz-transform: scale(0.95);
+			-o-transform: scale(0.95);
+		}
+	}
+
+	.shadowOnHover {
+      -webkit-transition: all 130ms ease-in-out;
+		-moz-transition: all 130ms ease-in-out;
+		-o-transition: all 130ms ease-in-out;
+		transition: all 130ms ease-in-out;
+		&:hover {
+			box-shadow: 1px 1px #004964, 2px 2px #004964, 3px 3px #004964;
+			-webkit-transform: translateX(-3px);
+			transform: translateX(-3px);
+		}
+	}
+
+	/*
+   Pulse On Hover Effect
+   */
+	@-webkit-keyframes pulse-grow-on-hover {
+		to {
+			-webkit-transform: scale(1.05);
+			transform: scale(1.05);
+		}
+	}
+	@keyframes pulse-grow-on-hover {
+		to {
+			-webkit-transform: scale(1.05);
+			transform: scale(1.05);
+		}
+	}
+	.pulse-grow-on-hover {
+		display: inline-block;
+		vertical-align: middle;
+		-webkit-transform: perspective(1px) translateZ(0);
+		transform: perspective(1px) translateZ(0);
+		box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+	}
+	.pulse-grow-on-hover:hover,
+	.pulse-grow-on-hover:focus,
+	.pulse-grow-on-hover:active {
+		-webkit-animation-name: pulse-grow-on-hover;
+		animation-name: pulse-grow-on-hover;
+		-webkit-animation-duration: 0.5s;
+		animation-duration: 0.5s;
+		-webkit-animation-timing-function: linear;
+		animation-timing-function: linear;
+		-webkit-animation-iteration-count: infinite;
+		animation-iteration-count: infinite;
+		-webkit-animation-direction: alternate;
+		animation-direction: alternate;
+	}
+
+   @keyframes rotate {
+      from {
+          -webkit-transform: rotate(0deg);
+      }
+      to { 
+          -webkit-transform: rotate(360deg);
+      }
+  }
+   @-webkit-keyframes rotate {
+      from {
+          -webkit-transform: rotate(0deg);
+      }
+      to { 
+          -webkit-transform: rotate(360deg);
+      }
+  }
+  
+  .spin-on-hover:hover,
+  .spin-on-hover:focus,
+  .spin-on-hover:active {
+      animation-name: rotate; 
+      animation-duration: 1.5s; 
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      -webkit-animation-name: rotate; 
+      -webkit-animation-duration: 1.5s; 
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: linear;
+  }
+}
