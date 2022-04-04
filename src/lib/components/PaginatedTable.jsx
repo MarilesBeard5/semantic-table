@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
 import {
@@ -14,14 +14,14 @@ import {
 	Statistic,
 } from 'semantic-ui-react'
 
-import styles from '../../styles/global.module.scss'
+import styles from '../styles/styles.scss'
 
 //Components
 import VTableHeader from './PaginatedTableHeader'
 import PaginatedTableCell from './PaginatedTableCell'
 
 //Utils
-import { getObjectProp, getSortedArray } from 'utils/index'
+import { getObjectProp, getSortedArray } from '../utils/index'
 
 //External
 import _ from 'lodash'
@@ -30,6 +30,10 @@ import { CSVLink } from 'react-csv'
 //Virtualized Rows Size
 import { useWindowDimensions } from './WindowSize'
 import moment from 'moment'
+
+const rowActionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
+const tableActionButton =
+	`ui blue basic button ${styles.Bordered}` + ' ' + `${styles.shadowOnHover}`
 
 const PaginatedTable = (props) => {
 	const {
@@ -60,8 +64,6 @@ const PaginatedTable = (props) => {
 	const [page, setPage] = useState(1)
 	const [slice, setSlice] = useState([])
 	const [range, setRange] = useState([])
-
-	const tableRef = useRef()
 
 	//Table Dimensions
 	const { width: innerWidth, height: innerHeight } = useWindowDimensions()
@@ -104,7 +106,7 @@ const PaginatedTable = (props) => {
 
 	const removeFilters = () => {
 		let newRows = getSortedArray(rows, {
-			order: sortOrder == 'ASC' ? sortOrder : 'DESC',
+			order: sortOrder === 'ASC' ? sortOrder : 'DESC',
 			accessor: sortAccessor,
 		})
 		setFilteredRows(newRows)
@@ -141,7 +143,7 @@ const PaginatedTable = (props) => {
 	}
 
 	const onRowDelete = (row) => {
-		let truncatedData = filteredRows.filter((r) => r.id != row.id)
+		let truncatedData = filteredRows.filter((r) => r.id !== row.id)
 		if (onDelete && typeof onDelete == 'function') {
 			onDelete(truncatedData)
 		}
@@ -256,7 +258,7 @@ const PaginatedTable = (props) => {
 			.filter((row) => row.checked)
 			.slice((page - 1) * rowLimit, page * rowLimit)
 		setSlice(slicedData)
-	}, [filteredRows, page, calculatedRange])
+	}, [filteredRows, page, calculatedRange, rowLimit])
 
 	/**
 	 * ==================================================
@@ -374,22 +376,18 @@ const PaginatedTable = (props) => {
 		)
 	}
 
-	const rowActionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
-	const tableActionButton =
-		`ui blue basic button ${styles.Bordered}` + ' ' + `${styles.shadowOnHover}`
-
 	//Cell
 	const renderCell = (
 		row,
-		{ width, Header, accessor, editable, type, options }
+		column
 	) => {
 		return (
 			<PaginatedTableCell
 				row={row}
-				column={{ width, Header, accessor, type, options }}
-				value={row[accessor]}
+				column={column}
+				value={row[column.accessor]}
 				onEditCell={onBlurRow}
-				isEditable={editable}
+				isEditable={column.editable}
 				setCanSave={setCanSave}
 			/>
 		)
@@ -555,7 +553,7 @@ const PaginatedTable = (props) => {
 								{slice.map((row, rowIndex) => {
 									return (
 										row.checked && (
-											<tr>
+											<tr key={`row-${rowIndex}`}>
 												{actionsActive && renderActionsColumn(row)}
 												{columns.map((column, index) => {
 													const colorIsAFunction =
@@ -568,7 +566,7 @@ const PaginatedTable = (props) => {
 															key={`column-${rowIndex + ' ' + index}`}
 															style={{
 																overflow:
-																	column.type == 'select' ? 'visible' : 'auto',
+																	column.type === 'select' ? 'visible' : 'auto',
 																width: `${column.width}px`,
 																maxWidth: `${column.width}px`,
 																backgroundColor: backgroundColor,
@@ -591,7 +589,7 @@ const PaginatedTable = (props) => {
 										<Menu floated="right" pagination>
 											{range.map((el, index) => (
 												<Menu.Item
-													key={index}
+													key={`menu-${index}`}
 													onClick={() => {
 														if (!isNaN(el)) setPage(el)
 													}}

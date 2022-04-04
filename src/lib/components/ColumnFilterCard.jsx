@@ -14,7 +14,7 @@ import {
 } from 'semantic-ui-react'
 
 //Utils
-import { getObjectProp, getUniqArray } from 'utils/index'
+import { getObjectProp, getUniqArray } from '../utils/index'
 
 // External Libraries
 import _ from 'lodash'
@@ -23,7 +23,6 @@ const ColumnFilterCard = (props) => {
 	const {
 		column,
 		options,
-		optionsCleaner = null,
 		onApply = null,
 		sortAccessor = null,
 		setSortAccessor = null,

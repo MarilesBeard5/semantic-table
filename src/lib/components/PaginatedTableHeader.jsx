@@ -3,10 +3,12 @@ import PropTypes from 'prop-types'
 
 import { Button, Popup, Header } from 'semantic-ui-react'
 
-import styles from '../../styles/global.module.scss'
+import styles from '../styles/styles.scss'
 
 //Components
-import ColumnFilterCard from 'components/ColumnFilterCard'
+import ColumnFilterCard from './ColumnFilterCard'
+
+const actionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
 
 const PaginatedTableHeader = (props) => {
 	const {
@@ -21,8 +23,6 @@ const PaginatedTableHeader = (props) => {
 		applyFilter = null,
 		revertFilter = null,
 	} = props
-
-	const actionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
 
 	//Column Header
 	const renderHeaderCell = (columnData, label) => {

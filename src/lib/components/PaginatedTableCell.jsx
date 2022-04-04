@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { Header, TextArea, Icon, Select } from 'semantic-ui-react'
 import Cleave from 'cleave.js/react'
 //Utils
-import { formatColumn, getObjectProp } from 'utils/index'
+import { formatColumn, getObjectProp } from '../utils/index'
 
 const renderCell = (
 	column,
@@ -165,10 +165,10 @@ const renderCell = (
 						placeholder={column.placeholder}
 						onChange={(e) => {
 							let newValue = e.target.value
-							if (newValue == 6 || newValue == 8) {
+							if (newValue === 6 || newValue === 8) {
 								return undefined
 							}
-							if (newValue % 2 != 0) {
+							if (newValue % 2 !== 0) {
 								return undefined
 							}
 							onEdit(newValue)
@@ -263,6 +263,21 @@ const renderCell = (
 	}
 }
 
+const processValue = (newValue, column) => {
+	const { type = 'text' } = column
+	switch (type) {
+		case 'text':
+			return newValue
+		case 'number':
+			return isNaN(parseInt(newValue)) ? null : newValue
+		case 'select':
+			let found = column?.options.find((option) => option.value === newValue)
+			return found ? found.value : null
+		default:
+			return newValue
+	}
+}
+
 const PaginatedTableCell = (props) => {
 	const { row, column, onEditCell, isEditable, setCanSave = false } = props
 
@@ -273,38 +288,23 @@ const PaginatedTableCell = (props) => {
 
 	useEffect(() => {
 		const currentValue = getObjectProp(row, column.accessor)
-		const newValue = processValue(currentValue)
+		const newValue = processValue(currentValue, column)
 		setValue(newValue)
-	}, [row])
+	}, [row, processValue, column])
 
 	useEffect(() => {
-		const oldValue = processValue(getObjectProp(row, column.accessor))
+		const oldValue = processValue(getObjectProp(row, column.accessor), column)
 		if (isEditable)
 			if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
 				setCanSave(true)
 			}
-	}, [value])
+	}, [value, column, processValue, isEditable, row, setCanSave])
 
 	useEffect(() => {
 		if (inputRef.current) {
 			willRenderCell ? inputRef.current.focus() : inputRef.current.blur()
 		}
 	}, [inputRef, willRenderCell])
-
-	const processValue = (newValue) => {
-		const { type = 'text' } = column
-		switch (type) {
-			case 'text':
-				return newValue
-			case 'number':
-				return isNaN(parseInt(newValue)) ? null : newValue
-			case 'select':
-				let found = column?.options.find((option) => option.value == newValue)
-				return found ? found.value : null
-			default:
-				return newValue
-		}
-	}
 
 	const onEdit = (newValue) => {
 		setValue(newValue)
@@ -324,7 +324,6 @@ const PaginatedTableCell = (props) => {
 		>
 			<Header.Content style={{ display: 'block' }}>
 				{renderCell(
-					row,
 					column,
 					value,
 					onEdit,
