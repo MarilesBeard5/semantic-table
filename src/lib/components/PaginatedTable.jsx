@@ -115,23 +115,22 @@ const PaginatedTable = (props) => {
 
 	const onBlurRow = (value, row, column) => {
 		let newRow = {}
-		setFilteredRows((prevRows) => {
-			const newRows = prevRows.map((r) => {
-				if (row.id === r.id) {
-					newRow = {
-						...r,
-						[column.accessor]: value,
-					}
-
-					if (onEditCell) {
-						onEditCell(newRow)
-					}
-					return newRow
+		const newRows = rows.map((r) => {
+			if (row.id === r.id) {
+				newRow = {
+					...r,
+					[column.accessor]: value,
 				}
-				return r
-			})
-			return newRows
+
+				if (onEditCell) {
+					onEditCell(newRow)
+				}
+				return newRow
+			}
+			return r
 		})
+		setFilteredRows(newRows)
+		setRows(newRows)
 	}
 
 	const onCancelEdition = () => {
@@ -377,10 +376,7 @@ const PaginatedTable = (props) => {
 	}
 
 	//Cell
-	const renderCell = (
-		row,
-		column
-	) => {
+	const renderCell = (row, column) => {
 		return (
 			<PaginatedTableCell
 				row={row}
@@ -552,7 +548,7 @@ const PaginatedTable = (props) => {
 							>
 								{slice.map((row, rowIndex) => {
 									return (
-										row.checked && (
+										row.checked !== 'false' && (
 											<tr>
 												{actionsActive && renderActionsColumn(row)}
 												{columns.map((column, index) => {
