@@ -14,10 +14,10 @@ import {
 	Statistic,
 } from 'semantic-ui-react'
 
-import styles from '../styles/styles.scss'
+import styles from '../styles/global.module.scss'
 
 //Components
-import VTableHeader from './PaginatedTableHeader'
+import PaginatedTableHeader from './PaginatedTableHeader'
 import PaginatedTableCell from './PaginatedTableCell'
 
 //Utils
@@ -424,7 +424,7 @@ const PaginatedTable = (props) => {
 					<Grid.Row
 						verticalAlign="middle"
 						textAlign="left"
-						style={{ paddingBottom: '10px', width: innerWidth / 1.05 }}
+						style={{ paddingBottom: '10px', width: innerWidth / 1.5 }}
 					>
 						{onSave && (
 							<Button
@@ -523,11 +523,11 @@ const PaginatedTable = (props) => {
 								overflowX: 'auto',
 							}}
 						>
-							<VTableHeader
+							<PaginatedTableHeader
 								columns={columns}
 								rows={filteredRows}
 								height={rows.length * 3.5}
-								width={innerWidth / 1.05}
+								width={innerWidth}
 								actionsActive={actionsActive}
 								actionsWidth={actionsWidth}
 								applyFilter={renderByFilter}
@@ -540,7 +540,7 @@ const PaginatedTable = (props) => {
 							<Table
 								className="ui fixed single line very compact table"
 								style={{
-									display: 'inline-block',
+									display: 'block',
 									tableLayout: 'fixed',
 									width: 'max-content',
 								}}
@@ -553,7 +553,7 @@ const PaginatedTable = (props) => {
 								{slice.map((row, rowIndex) => {
 									return (
 										row.checked && (
-											<tr key={`row-${rowIndex}`}>
+											<tr>
 												{actionsActive && renderActionsColumn(row)}
 												{columns.map((column, index) => {
 													const colorIsAFunction =
@@ -589,7 +589,7 @@ const PaginatedTable = (props) => {
 										<Menu floated="right" pagination>
 											{range.map((el, index) => (
 												<Menu.Item
-													key={`menu-${index}`}
+													key={index}
 													onClick={() => {
 														if (!isNaN(el)) setPage(el)
 													}}
@@ -623,6 +623,7 @@ PaginatedTable.propTypes = {
 	),
 	actionsActive: PropTypes.bool,
 	actionsWidth: PropTypes.number,
+	onSave: PropTypes.func,
 	onAdd: PropTypes.func,
 	onSelect: PropTypes.func,
 	onDelete: PropTypes.func,

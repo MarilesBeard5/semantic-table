@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { Button, Popup, Header } from 'semantic-ui-react'
 
-import styles from '../styles/styles.scss'
+import styles from '../styles/global.module.scss'
 
 //Components
 import ColumnFilterCard from './ColumnFilterCard'
@@ -83,7 +83,7 @@ const PaginatedTableHeader = (props) => {
 					borderCollapse: 'collapse',
 				}}
 			>
-				<Header as="h5" content={label} color="teal" />
+				<Header as="h5" content={label} className={styles.simpleHeader} />
 			</th>
 		)
 	}
@@ -93,7 +93,7 @@ const PaginatedTableHeader = (props) => {
 
 	return (
 		<table
-			className="ui teal fixed very compact unstackable table"
+			className={`ui fixed`  + ' ' + `${styles['primary-border']}` + ` very compact unstackable table`}
 			style={{
 				display: 'inline-block',
 				tableLayout: 'fixed',

@@ -114,4 +114,5 @@ export const getObjectProp = function (object, stringProp) {
 			return
 		}
 	}
+	return o
 }

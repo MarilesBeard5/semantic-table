@@ -1,23 +1,40 @@
-import './App.css';
+import { Header } from 'semantic-ui-react'
+import './index.css'
+import PaginatedTable from './lib/components/PaginatedTable'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<div className="PageContainer">
+			<PaginatedTable
+				title="Example"
+				rows={[
+					{
+						title: 'Foo',
+						description: 'Neque porro quisquam',
+					},
+					{
+						title: 'Bar',
+						description: 'Aenean eget consectetur',
+					},
+				]}
+				columns={[
+					{
+						width: 250,
+						Header: 'Title',
+						accessor: 'title',
+						filterable: true,
+					},
+					{
+						width: 225,
+						Header: 'Description',
+						accessor: 'description',
+						filterable: true,
+					},
+				]}
+				actionsWidth={200}
+			/>
+		</div>
+	)
 }
 
-export default App;
+export default App
