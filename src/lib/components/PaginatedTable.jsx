@@ -55,8 +55,8 @@ const PaginatedTable = (props) => {
 	} = props
 
 	// Inner States
-	const [rows, setRows] = useState(props.rows)
-	const [filteredRows, setFilteredRows] = useState(props.rows)
+	const [rows, setRows] = useState(props.rows ?? [])
+	const [filteredRows, setFilteredRows] = useState(props.rows ?? [])
 	const [hasBeenFiltered, setHasBeenFiltered] = useState(false)
 	const [canSave, setCanSave] = useState(false)
 	const [sortOrder, setSortOrder] = useState(null)
@@ -75,7 +75,7 @@ const PaginatedTable = (props) => {
 	 */
 
 	useEffect(() => {
-		const localRows = props.rows.map((row) => {
+		const localRows = (props.rows ?? []).map((row) => {
 			return {
 				...row,
 				checked: true,
