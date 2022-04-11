@@ -50,6 +50,7 @@ const PaginatedTable = (props) => {
 		enableExportToCSV = false,
 		rowLimit = 15,
 		loading = false,
+		paginated = true,
 		additionalActionButtons = [],
 		additionalHeaderButtons = [],
 	} = props
@@ -252,12 +253,14 @@ const PaginatedTable = (props) => {
 	}, [filteredRows, rowLimit, page])
 
 	useEffect(() => {
-		setRange(calculatedRange)
-		const slicedData = filteredRows
-			.filter((row) => row.checked)
-			.slice((page - 1) * rowLimit, page * rowLimit)
-		setSlice(slicedData)
-	}, [filteredRows, page, calculatedRange, rowLimit])
+		if (paginated) {
+			setRange(calculatedRange)
+			const slicedData = filteredRows
+				.filter((row) => row.checked)
+				.slice((page - 1) * rowLimit, page * rowLimit)
+			setSlice(slicedData)
+		}
+	}, [filteredRows, page, calculatedRange, rowLimit, paginated])
 
 	/**
 	 * ==================================================
@@ -546,7 +549,7 @@ const PaginatedTable = (props) => {
 								singleLine
 								unstackable
 							>
-								{slice.map((row, rowIndex) => {
+								{(paginated ? slice : filteredRows).map((row, rowIndex) => {
 									return (
 										row.checked !== 'false' && (
 											<tr>
@@ -578,26 +581,28 @@ const PaginatedTable = (props) => {
 								})}
 							</Table>
 						</div>
-						<Grid style={{ margin: '1vh' }}>
-							<Grid.Row columns={1}>
-								<Grid.Column stretched>
-									<Table.Footer>
-										<Menu floated="right" pagination>
-											{range.map((el, index) => (
-												<Menu.Item
-													key={index}
-													onClick={() => {
-														if (!isNaN(el)) setPage(el)
-													}}
-												>
-													{el}
-												</Menu.Item>
-											))}
-										</Menu>
-									</Table.Footer>
-								</Grid.Column>
-							</Grid.Row>
-						</Grid>
+						{paginated && (
+							<Grid style={{ margin: '1vh' }}>
+								<Grid.Row columns={1}>
+									<Grid.Column stretched>
+										<Table.Footer>
+											<Menu floated="right" pagination>
+												{range.map((el, index) => (
+													<Menu.Item
+														key={index}
+														onClick={() => {
+															if (!isNaN(el)) setPage(el)
+														}}
+													>
+														{el}
+													</Menu.Item>
+												))}
+											</Menu>
+										</Table.Footer>
+									</Grid.Column>
+								</Grid.Row>
+							</Grid>
+						)}
 					</>
 				)}
 			</>
@@ -629,6 +634,7 @@ PaginatedTable.propTypes = {
 	enableExportToCSV: PropTypes.bool,
 	rowLimit: PropTypes.number,
 	loading: PropTypes.bool,
+	paginated: PropTypes.bool,
 }
 
 export default PaginatedTable
