@@ -7,6 +7,7 @@ function App() {
 		<div className="PageContainer">
 			<PaginatedTable
 				title="Example"
+				paginated={false}
 				rows={[
 					{
 						title: 'Foo',
