@@ -49,6 +49,7 @@ const PaginatedTable = (props) => {
 		onEditCell = null,
 		onSave = null,
 		onAdd = null,
+		onAddRow = null,
 		enableExportToCSV = false,
 		rowLimit = 15,
 		loading = false,
@@ -139,9 +140,10 @@ const PaginatedTable = (props) => {
 	}
 
 	const onCancelEdition = () => {
+		setRows(props.rows)
 		setFilteredRows(props.rows)
 		if (onCancel && typeof onCancel == 'function') {
-			onCancel(rows)
+			onCancel(props.rows)
 		}
 		setCanSave(false)
 	}
@@ -199,16 +201,22 @@ const PaginatedTable = (props) => {
 		setCanSave(false)
 	}
 
-	const onAddRow = () => {
+	const onAddNewRow = () => {
 		const id = moment().unix().toString().slice(3)
-		setRows((prevRows) => [
-			...prevRows,
-			{
-				id,
-				_fake: true,
-				...props.onAddRow(id),
-			},
-		])
+		if (onAddRow && typeof onAddRow == 'function') {
+			const newRowData = onAddRow(id)
+			const newRows = [
+				...rows,
+				{
+					id,
+					_fake: true,
+					...newRowData,
+				},
+			]
+			setFilteredRows(newRows)
+			setRows(newRows)
+			setCanSave(true)
+		}
 	}
 
 	/**
@@ -494,6 +502,20 @@ const PaginatedTable = (props) => {
 								content="Nuevo"
 							/>
 						)}
+						{onAddRow && (
+							<Button
+								className={tableActionButton}
+								style={{ background: 'transparent', color: 'blue' }}
+								onClick={() => {
+									onAddNewRow()
+								}}
+								color="blue"
+								size="tiny"
+								type="button"
+								icon="plus"
+								content="Nueva Fila"
+							/>
+						)}
 						<Button
 							className={tableActionButton}
 							style={{ background: 'transparent', color: 'blue' }}
@@ -590,7 +612,10 @@ const PaginatedTable = (props) => {
 														<td
 															key={`column-${rowIndex + ' ' + index}`}
 															style={{
-																overflow: (column.type == 'select' && focused) ? 'visible' : 'auto',
+																overflow:
+																	column.type == 'select' && focused
+																		? 'visible'
+																		: 'auto',
 																width: `${column.width}px`,
 																maxWidth: `${column.width}px`,
 																backgroundColor: backgroundColor,
@@ -650,11 +675,12 @@ PaginatedTable.propTypes = {
 	actionsActive: PropTypes.bool,
 	actionsWidth: PropTypes.number,
 	onSave: PropTypes.func,
-	onAdd: PropTypes.func,
-	onSelect: PropTypes.func,
-	onDelete: PropTypes.func,
-	onCancel: PropTypes.func,
-	onEditCell: PropTypes.func,
+	onAdd: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+	onAddRow: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+	onSelect: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+	onDelete: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+	onCancel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+	onEditCell: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 	disableCancel: PropTypes.bool,
 	enableExportToCSV: PropTypes.bool,
 	rowLimit: PropTypes.number,
