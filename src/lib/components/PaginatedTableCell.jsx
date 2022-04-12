@@ -7,6 +7,8 @@ import Cleave from 'cleave.js/react'
 //Utils
 import { formatColumn, getObjectProp } from '../utils/index'
 
+import styles from '../styles/global.module.scss'
+
 const renderCell = (
 	column,
 	value,
@@ -201,7 +203,7 @@ const renderCell = (
 	} else {
 		switch (type) {
 			case 'text':
-				return value
+				return <span>{value}</span>
 
 			case 'date':
 				return <span>{value ? formatColumn('date', value) : ''}</span>
@@ -279,7 +281,7 @@ const processValue = (newValue, column) => {
 }
 
 const PaginatedTableCell = (props) => {
-	const { row, column, onEditCell, isEditable, setCanSave = false } = props
+	const { row, column, onEditCell, isEditable, setCanSave = false, isFocused = null } = props
 
 	const inputRef = useRef(null)
 
@@ -304,7 +306,11 @@ const PaginatedTableCell = (props) => {
 		if (inputRef.current) {
 			willRenderCell ? inputRef.current.focus() : inputRef.current.blur()
 		}
-	}, [inputRef, willRenderCell])
+	}, [inputRef, willRenderCell, isFocused])
+
+	useEffect(() => {
+		isFocused(willRenderCell ?? false)
+	}, [willRenderCell, isFocused])
 
 	const onEdit = (newValue) => {
 		setValue(newValue)

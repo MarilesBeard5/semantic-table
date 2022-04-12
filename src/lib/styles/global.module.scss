@@ -1,23 +1,23 @@
 :global(#root) {
 	.IconButton {
 		background-color: transparent;
-		color: #1E56AA;
+		color: #1e56aa;
 	}
 
-   .IconLabel {
-      background-color: transparent;
-   }
-   .Bordered {
-      border:0.15em solid #1E56AA;
-      box-sizing: border-box;
-      text-decoration:none;
-   }
+	.IconLabel {
+		background-color: transparent;
+	}
+	.Bordered {
+		border: 0.15em solid #1e56aa;
+		box-sizing: border-box;
+		text-decoration: none;
+	}
 
-   .nonBordered {
-      border: 0 none;
-      box-sizing: border-box;
-      text-decoration: none;
-   }
+	.nonBordered {
+		border: 0 none;
+		box-sizing: border-box;
+		text-decoration: none;
+	}
 
 	.Sticky {
 		position: sticky;
@@ -52,7 +52,7 @@
 	}
 
 	.shadowOnHover {
-      -webkit-transition: all 130ms ease-in-out;
+		-webkit-transition: all 130ms ease-in-out;
 		-moz-transition: all 130ms ease-in-out;
 		-o-transition: all 130ms ease-in-out;
 		transition: all 130ms ease-in-out;
@@ -100,33 +100,33 @@
 		animation-direction: alternate;
 	}
 
-   @keyframes rotate {
-      from {
-          -webkit-transform: rotate(0deg);
-      }
-      to { 
-          -webkit-transform: rotate(360deg);
-      }
-  }
-   @-webkit-keyframes rotate {
-      from {
-          -webkit-transform: rotate(0deg);
-      }
-      to { 
-          -webkit-transform: rotate(360deg);
-      }
-  }
-  
-  .spin-on-hover:hover,
-  .spin-on-hover:focus,
-  .spin-on-hover:active {
-      animation-name: rotate; 
-      animation-duration: 1.5s; 
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-      -webkit-animation-name: rotate; 
-      -webkit-animation-duration: 1.5s; 
-      -webkit-animation-iteration-count: infinite;
-      -webkit-animation-timing-function: linear;
-  }
+	@keyframes rotate {
+		from {
+			-webkit-transform: rotate(0deg);
+		}
+		to {
+			-webkit-transform: rotate(360deg);
+		}
+	}
+	@-webkit-keyframes rotate {
+		from {
+			-webkit-transform: rotate(0deg);
+		}
+		to {
+			-webkit-transform: rotate(360deg);
+		}
+	}
+
+	.spin-on-hover:hover,
+	.spin-on-hover:focus,
+	.spin-on-hover:active {
+		animation-name: rotate;
+		animation-duration: 1.5s;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+		-webkit-animation-name: rotate;
+		-webkit-animation-duration: 1.5s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-timing-function: linear;
+	}
 }
