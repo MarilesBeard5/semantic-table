@@ -9,6 +9,11 @@ function App() {
 				title="Example"
 				paginated={false}
 				onCancel={true}
+				onAddRow={(id) => ({
+					title: 'New Title',
+					description: 'Lorem Ipsum',
+					type: 'NONE'
+				})}
 				rows={[
 					{
 						id: Math.floor(Math.random() * 500),

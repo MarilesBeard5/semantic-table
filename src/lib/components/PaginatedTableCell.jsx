@@ -306,11 +306,11 @@ const PaginatedTableCell = (props) => {
 		if (inputRef.current) {
 			willRenderCell ? inputRef.current.focus() : inputRef.current.blur()
 		}
-	}, [inputRef, willRenderCell, isFocused])
+	}, [inputRef, willRenderCell])
 
 	useEffect(() => {
-		isFocused(willRenderCell ?? false)
-	}, [willRenderCell, isFocused])
+		isFocused(willRenderCell)
+	}, [willRenderCell])
 
 	const onEdit = (newValue) => {
 		setValue(newValue)
@@ -355,6 +355,7 @@ PaginatedTableCell.propTypes = {
 	row: PropTypes.object,
 	value: PropTypes.any,
 	isEditable: PropTypes.bool,
+	isFocused: PropTypes.func,
 	setCanSave: PropTypes.func,
 }
 
