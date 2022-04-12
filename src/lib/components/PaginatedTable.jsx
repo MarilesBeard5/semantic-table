@@ -210,6 +210,7 @@ const PaginatedTable = (props) => {
 				{
 					id,
 					_fake: true,
+					checked: true,
 					...newRowData,
 				},
 			]
@@ -443,7 +444,7 @@ const PaginatedTable = (props) => {
 		</Segment>
 	)
 
-	const hasRows = props.rows.length > 0
+	const hasRows = rows.length > 0 ? rows.length > 0 : props.rows.length > 0
 
 	const isFocused = (condition) => {
 		setFocused(condition)
