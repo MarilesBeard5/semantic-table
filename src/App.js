@@ -14,26 +14,7 @@ function App() {
 					description: 'Lorem Ipsum',
 					type: 'NONE'
 				})}
-				rows={[
-					{
-						id: Math.floor(Math.random() * 500),
-						title: 'Foo',
-						description: 'Neque porro quisquam',
-						type: 'FOO',
-					},
-					{
-						id: Math.floor(Math.random() * 500),
-						title: 'Bar',
-						description: 'Aenean eget consectetur',
-						type: 'BAR',
-					},
-					{
-						id: Math.floor(Math.random() * 500),
-						title: null,
-						description: 'Aenean vitae urna',
-						type: 'NONE',
-					},
-				]}
+				rows={[]}
 				columns={[
 					{
 						width: 250,
