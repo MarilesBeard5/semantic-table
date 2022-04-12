@@ -35,6 +35,8 @@ const rowActionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
 const tableActionButton =
 	`ui blue basic button ${styles.Bordered}` + ' ' + `${styles.shadowOnHover}`
 
+const DOTS = '...'
+
 const PaginatedTable = (props) => {
 	const {
 		title = 'Table',
@@ -65,6 +67,8 @@ const PaginatedTable = (props) => {
 	const [page, setPage] = useState(1)
 	const [slice, setSlice] = useState([])
 	const [range, setRange] = useState([])
+
+	const [focused, setFocused] = useState(false)
 
 	//Table Dimensions
 	const { width: innerWidth, height: innerHeight } = useWindowDimensions()
@@ -135,7 +139,7 @@ const PaginatedTable = (props) => {
 	}
 
 	const onCancelEdition = () => {
-		setFilteredRows(rows)
+		setFilteredRows(props.rows)
 		if (onCancel && typeof onCancel == 'function') {
 			onCancel(rows)
 		}
@@ -195,7 +199,23 @@ const PaginatedTable = (props) => {
 		setCanSave(false)
 	}
 
-	const DOTS = '...'
+	const onAddRow = () => {
+		const id = moment().unix().toString().slice(3)
+		setRows((prevRows) => [
+			...prevRows,
+			{
+				id,
+				_fake: true,
+				...props.onAddRow(id),
+			},
+		])
+	}
+
+	/**
+	 * =====================================================================
+	 * PAGINADO
+	 * =====================================================================
+	 */
 
 	useEffect(() => {
 		if (slice.length < 1 && page !== 1) {
@@ -388,6 +408,7 @@ const PaginatedTable = (props) => {
 				onEditCell={onBlurRow}
 				isEditable={column.editable}
 				setCanSave={setCanSave}
+				isFocused={isFocused}
 			/>
 		)
 	}
@@ -415,6 +436,10 @@ const PaginatedTable = (props) => {
 	)
 
 	const hasRows = props.rows.length > 0
+
+	const isFocused = (condition) => {
+		setFocused(condition)
+	}
 
 	return (
 		<>
@@ -519,6 +544,7 @@ const PaginatedTable = (props) => {
 							style={{
 								maxHeight: innerHeight / 1.5,
 								width: innerWidth / 1.05,
+								height: innerHeight / 1.5,
 								overflowX: 'auto',
 							}}
 						>
@@ -564,8 +590,7 @@ const PaginatedTable = (props) => {
 														<td
 															key={`column-${rowIndex + ' ' + index}`}
 															style={{
-																overflow:
-																	column.type === 'select' ? 'visible' : 'auto',
+																overflow: (column.type == 'select' && focused) ? 'visible' : 'auto',
 																width: `${column.width}px`,
 																maxWidth: `${column.width}px`,
 																backgroundColor: backgroundColor,
