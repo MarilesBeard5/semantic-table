@@ -324,6 +324,7 @@ const PaginatedTableCell = (props) => {
 	return (
 		<Header
 			as="h5"
+			style={{ height: '15px' }}
 			onClick={() => {
 				setWillRenderCell(true)
 			}}
