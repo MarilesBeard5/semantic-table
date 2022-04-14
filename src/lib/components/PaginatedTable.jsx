@@ -74,6 +74,10 @@ const PaginatedTable = (props) => {
 	//Table Dimensions
 	const { width: innerWidth, height: innerHeight } = useWindowDimensions()
 
+	const tableHeight = useMemo(() => {
+		return props.height ? props.height : innerHeight / 2
+	}, [props.height, innerHeight])
+
 	/**
 	 * =====================================================================
 	 * LOGICA
@@ -91,15 +95,19 @@ const PaginatedTable = (props) => {
 		setRows(localRows)
 	}, [props.rows])
 
-	const renderByFilter = (accessor, options, sortBy, sortDirection) => {
-		// TODO: case for 'select' type
+	const renderByFilter = (
+		{ accessor, type },
+		options,
+		sortBy,
+		sortDirection
+	) => {
 		let newRows = getSortedArray(rows, {
 			order: sortDirection,
 			accessor: sortBy,
 		})
 
 		let renderedRows = newRows.map((row) => {
-			let currentRowValue = getObjectProp(row, accessor)
+			let currentRowValue = type == 'select' ? row[accessor] : getObjectProp(row, accessor)
 			let found = options.find((option) => {
 				let foundRowValue = getObjectProp(option, accessor)
 				return currentRowValue === foundRowValue
@@ -567,7 +575,7 @@ const PaginatedTable = (props) => {
 							style={{
 								maxHeight: innerHeight / 1.5,
 								width: innerWidth / 1.05,
-								height: innerHeight / 1.5,
+								height: tableHeight,
 								overflowX: 'auto',
 							}}
 						>
@@ -600,7 +608,7 @@ const PaginatedTable = (props) => {
 							>
 								{(paginated ? slice : filteredRows).map((row, rowIndex) => {
 									return (
-										row.checked !== 'false' && (
+										row.checked != 'false' && (
 											<tr>
 												{actionsActive && renderActionsColumn(row)}
 												{columns.map((column, index) => {

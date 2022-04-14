@@ -46,10 +46,12 @@ const ColumnFilterCard = (props) => {
 		return getUniqArray(options, column.accessor).map((option) => {
 			let value = null
 			if (column.type == 'select') {
-				value = column?.options.find(
-					(selectableOption) =>
-						selectableOption.value == getObjectProp(option, column.accessor)
-				).text
+				const optionValue = getObjectProp(option, column.accessor)
+				if (optionValue) {
+					value = column?.options.find(
+						(selectableOption) => selectableOption.value == optionValue
+					).text
+				}
 			} else {
 				value = getObjectProp(option, column.accessor)
 			}
@@ -73,7 +75,7 @@ const ColumnFilterCard = (props) => {
 
 	useEffect(() => {
 		canApply &&
-			onApply(column.accessor, currentOptions, sortAccessor, sortOrder)
+			onApply(column, currentOptions, sortAccessor, sortOrder)
 	}, [sortOrder, sortAccessor, canApply])
 
 	const allOptionsChecked = useMemo(() => {
@@ -88,7 +90,6 @@ const ColumnFilterCard = (props) => {
 	}, [currentOptions, filteredOptions])
 
 	useEffect(() => {
-		// TODO: case for 'select' type
 		let filteredLabeledOptions = currentOptions.filter((option) => {
 			if (filters) {
 				const { type = 'text' } = column
@@ -172,7 +173,7 @@ const ColumnFilterCard = (props) => {
 				type="button"
 				onClick={(e) => {
 					onApply &&
-						onApply(column.accessor, currentOptions, sortAccessor, sortOrder)
+						onApply(column, currentOptions, sortAccessor, sortOrder)
 				}}
 				disabled={!canApply}
 			/>
@@ -183,7 +184,7 @@ const ColumnFilterCard = (props) => {
 				labelPosition="left"
 				type="button"
 				onClick={(e) => {
-					onApply && onApply(column.accessor, options, sortAccessor, sortOrder)
+					onApply && onApply(column, options, sortAccessor, sortOrder)
 				}}
 				disabled={true}
 			/>

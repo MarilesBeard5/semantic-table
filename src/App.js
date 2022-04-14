@@ -7,7 +7,6 @@ function App() {
 		<div className="PageContainer">
 			<PaginatedTable
 				title="Example"
-				paginated={false}
 				onCancel={true}
 				onAddRow={(id) => ({
 					title: 'New Title',
