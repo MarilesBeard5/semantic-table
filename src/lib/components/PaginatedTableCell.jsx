@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { Header, TextArea, Icon, Select } from 'semantic-ui-react'
 import Cleave from 'cleave.js/react'
 //Utils
-import { formatColumn, getObjectProp } from '../utils/index'
+import { formatColumn, getObjectProp, processValue } from '../utils/index'
 
 const renderCell = (
 	column,
@@ -263,21 +263,6 @@ const renderCell = (
 	}
 }
 
-const processValue = (newValue, column) => {
-	const { type = 'text' } = column
-	switch (type) {
-		case 'text':
-			return newValue
-		case 'number':
-			return isNaN(parseInt(newValue)) ? null : newValue
-		case 'select':
-			let found = column?.options.find((option) => option.value === newValue)
-			return found ? found.value : null
-		default:
-			return newValue
-	}
-}
-
 const PaginatedTableCell = (props) => {
 	const { row, column, onEditCell, isEditable, setCanSave = false, isFocused = null } = props
 
@@ -291,14 +276,6 @@ const PaginatedTableCell = (props) => {
 		const newValue = processValue(currentValue, column)
 		setValue(newValue)
 	}, [row, processValue, column])
-
-	useEffect(() => {
-		const oldValue = processValue(getObjectProp(row, column.accessor), column)
-		if (isEditable)
-			if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
-				setCanSave(true)
-			}
-	}, [value, column, processValue, isEditable, row, setCanSave])
 
 	useEffect(() => {
 		if (inputRef.current) {
@@ -322,8 +299,8 @@ const PaginatedTableCell = (props) => {
 	return (
 		<Header
 			as="h5"
-			style={{ height: '15px' }}
-			contentEditable={true}
+			style={{ height: '15px', cursor: isEditable && 'cell' }}
+			contentEditable={isEditable}
 			onFocus={() => {
 				setWillRenderCell(true)
 			}}
