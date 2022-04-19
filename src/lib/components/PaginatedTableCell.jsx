@@ -7,8 +7,6 @@ import Cleave from 'cleave.js/react'
 //Utils
 import { formatColumn, getObjectProp } from '../utils/index'
 
-import styles from '../styles/global.module.scss'
-
 const renderCell = (
 	column,
 	value,
@@ -325,7 +323,8 @@ const PaginatedTableCell = (props) => {
 		<Header
 			as="h5"
 			style={{ height: '15px' }}
-			onClick={() => {
+			contentEditable={true}
+			onFocus={() => {
 				setWillRenderCell(true)
 			}}
 		>
@@ -337,7 +336,7 @@ const PaginatedTableCell = (props) => {
 					isEditable,
 					willRenderCell,
 					handleBlur,
-					inputRef
+					inputRef,
 				)}
 			</Header.Content>
 		</Header>
