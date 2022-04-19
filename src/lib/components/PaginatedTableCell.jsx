@@ -284,7 +284,7 @@ const PaginatedTableCell = (props) => {
 	}, [inputRef, willRenderCell])
 
 	useEffect(() => {
-		isFocused(willRenderCell)
+		isFocused(willRenderCell, row)
 	}, [willRenderCell])
 
 	const onEdit = (newValue) => {
