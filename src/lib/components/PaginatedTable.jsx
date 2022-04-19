@@ -69,7 +69,10 @@ const PaginatedTable = (props) => {
 	const [slice, setSlice] = useState([])
 	const [range, setRange] = useState([])
 
-	const [focused, setFocused] = useState(false)
+	const [focused, setFocused] = useState({
+		condition: false,
+		id: null
+	})
 
 	//Table Dimensions
 	const { width: innerWidth, height: innerHeight } = useWindowDimensions()
@@ -467,8 +470,11 @@ const PaginatedTable = (props) => {
 
 	const hasRows = rows.length > 0 ? rows.length > 0 : props.rows.length > 0
 
-	const isFocused = (condition) => {
-		setFocused(condition)
+	const isFocused = (condition, row) => {
+		setFocused({
+			condition: condition,
+			id: row.id
+		})
 	}
 
 	return (
@@ -607,7 +613,7 @@ const PaginatedTable = (props) => {
 							/>
 
 							<Table
-								className="ui fixed single line very compact table"
+								className="ui celled fixed single line very compact table"
 								style={{
 									display: 'block',
 									tableLayout: 'fixed',
@@ -615,14 +621,18 @@ const PaginatedTable = (props) => {
 								}}
 								columns={columns.length}
 								definition
-								striped
-								singleLine
 								unstackable
 							>
 								{(paginated ? slice : filteredRows).map((row, rowIndex) => {
 									return (
 										row.checked != 'false' && (
-											<tr>
+											<tr
+												key={`row-${rowIndex}`}
+												className={`ui table row`}
+												style={{ 
+													backgroundColor: (focused.condition && focused.id === row.id) && '#1e56aa15'
+												 }}
+											>
 												{actionsActive && renderActionsColumn(row)}
 												{columns.map((column, index) => {
 													const colorIsAFunction =
@@ -635,7 +645,7 @@ const PaginatedTable = (props) => {
 															key={`column-${rowIndex + ' ' + index}`}
 															style={{
 																overflow:
-																	column.type == 'select' && focused
+																	column.type == 'select' && focused.condition
 																		? 'visible'
 																		: 'auto',
 																width: `${column.width}px`,
@@ -661,10 +671,14 @@ const PaginatedTable = (props) => {
 											<Menu floated="right" pagination>
 												{range.map((el, index) => (
 													<Menu.Item
-														key={index}
+														key={`menu-item-${el}`}
 														onClick={() => {
 															if (!isNaN(el)) setPage(el)
 														}}
+														index={el}
+														style={{ 
+															backgroundColor: (page === (!isNaN(el) && el)) && '#1e56aa15'
+														 }}
 													>
 														{el}
 													</Menu.Item>
