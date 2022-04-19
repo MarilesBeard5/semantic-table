@@ -21,7 +21,7 @@ import PaginatedTableHeader from './PaginatedTableHeader'
 import PaginatedTableCell from './PaginatedTableCell'
 
 //Utils
-import { getObjectProp, getSortedArray } from '../utils/index'
+import { getObjectProp, getSortedArray, processValue } from '../utils/index'
 
 //External
 import _ from 'lodash'
@@ -69,7 +69,10 @@ const PaginatedTable = (props) => {
 	const [slice, setSlice] = useState([])
 	const [range, setRange] = useState([])
 
-	const [focused, setFocused] = useState(false)
+	const [focused, setFocused] = useState({
+		condition: false,
+		id: null
+	})
 
 	//Table Dimensions
 	const { width: innerWidth, height: innerHeight } = useWindowDimensions()
@@ -107,7 +110,8 @@ const PaginatedTable = (props) => {
 		})
 
 		let renderedRows = newRows.map((row) => {
-			let currentRowValue = type == 'select' ? row[accessor] : getObjectProp(row, accessor)
+			let currentRowValue =
+				type == 'select' ? row[accessor] : getObjectProp(row, accessor)
 			let found = options.find((option) => {
 				let foundRowValue = getObjectProp(option, accessor)
 				return currentRowValue === foundRowValue
@@ -143,15 +147,25 @@ const PaginatedTable = (props) => {
 			}
 			return r
 		})
+		const oldValue = processValue(getObjectProp(row, column.accessor), column)
+		if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
+			setCanSave(true)
+		}
 		setFilteredRows(newRows)
 		setRows(newRows)
 	}
 
 	const onCancelEdition = () => {
-		setRows(props.rows)
-		setFilteredRows(props.rows)
+		const localRows = (props.rows ?? []).map((row) => {
+			return {
+				...row,
+				checked: true,
+			}
+		})
+		setFilteredRows(localRows)
+		setRows(localRows)
 		if (onCancel && typeof onCancel == 'function') {
-			onCancel(props.rows)
+			onCancel(rows)
 		}
 		setCanSave(false)
 	}
@@ -214,13 +228,13 @@ const PaginatedTable = (props) => {
 		if (onAddRow && typeof onAddRow == 'function') {
 			const newRowData = onAddRow(id)
 			const newRows = [
-				...rows,
 				{
 					id,
 					_fake: true,
 					checked: true,
 					...newRowData,
 				},
+				...rows,
 			]
 			setFilteredRows(newRows)
 			setRows(newRows)
@@ -367,6 +381,7 @@ const PaginatedTable = (props) => {
 								size="tiny"
 								type="button"
 								icon="edit"
+								tabIndex={-1}
 							/>
 						}
 						on="hover"
@@ -385,6 +400,7 @@ const PaginatedTable = (props) => {
 								size="tiny"
 								type="button"
 								icon="trash"
+								tabIndex={-1}
 							/>
 						}
 						on="hover"
@@ -393,7 +409,7 @@ const PaginatedTable = (props) => {
 				{additionalActionButtons.map((action, index) => {
 					return (
 						<Popup
-							key={`action-button-${index}=${action.content}`}
+							key={`action-button-${index}=${action.name}`}
 							content={action.name}
 							trigger={
 								<Button
@@ -454,8 +470,11 @@ const PaginatedTable = (props) => {
 
 	const hasRows = rows.length > 0 ? rows.length > 0 : props.rows.length > 0
 
-	const isFocused = (condition) => {
-		setFocused(condition)
+	const isFocused = (condition, row) => {
+		setFocused({
+			condition: condition,
+			id: row.id
+		})
 	}
 
 	return (
@@ -573,7 +592,7 @@ const PaginatedTable = (props) => {
 					<>
 						<div
 							style={{
-								maxHeight: innerHeight / 1.5,
+								maxHeight: innerHeight / 1.35,
 								width: innerWidth / 1.05,
 								height: tableHeight,
 								overflowX: 'auto',
@@ -594,7 +613,7 @@ const PaginatedTable = (props) => {
 							/>
 
 							<Table
-								className="ui fixed single line very compact table"
+								className="ui celled fixed single line very compact table"
 								style={{
 									display: 'block',
 									tableLayout: 'fixed',
@@ -602,14 +621,18 @@ const PaginatedTable = (props) => {
 								}}
 								columns={columns.length}
 								definition
-								striped
-								singleLine
 								unstackable
 							>
 								{(paginated ? slice : filteredRows).map((row, rowIndex) => {
 									return (
 										row.checked != 'false' && (
-											<tr>
+											<tr
+												key={`row-${rowIndex}`}
+												className={`ui table row`}
+												style={{ 
+													backgroundColor: (focused.condition && focused.id === row.id) && '#1e56aa15'
+												 }}
+											>
 												{actionsActive && renderActionsColumn(row)}
 												{columns.map((column, index) => {
 													const colorIsAFunction =
@@ -622,7 +645,7 @@ const PaginatedTable = (props) => {
 															key={`column-${rowIndex + ' ' + index}`}
 															style={{
 																overflow:
-																	column.type == 'select' && focused
+																	column.type == 'select' && focused.condition
 																		? 'visible'
 																		: 'auto',
 																width: `${column.width}px`,
@@ -648,10 +671,14 @@ const PaginatedTable = (props) => {
 											<Menu floated="right" pagination>
 												{range.map((el, index) => (
 													<Menu.Item
-														key={index}
+														key={`menu-item-${el}`}
 														onClick={() => {
 															if (!isNaN(el)) setPage(el)
 														}}
+														index={el}
+														style={{ 
+															backgroundColor: (page === (!isNaN(el) && el)) && '#1e56aa15'
+														 }}
 													>
 														{el}
 													</Menu.Item>
@@ -679,22 +706,39 @@ PaginatedTable.propTypes = {
 			Header: PropTypes.string,
 			accessor: PropTypes.string,
 			type: PropTypes.string,
+			editable: PropTypes.bool,
+			filterable: PropTypes.bool,
+			options: PropTypes.arrayOf(
+				PropTypes.shape({
+					Header: PropTypes.string,
+					key: PropTypes.string,
+					value: PropTypes.any,
+					color: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+				})
+			),
 		})
 	),
 	actionsActive: PropTypes.bool,
 	actionsWidth: PropTypes.number,
 	onSave: PropTypes.func,
-	onAdd: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+	onAdd: PropTypes.func,
 	onAddRow: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-	onSelect: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+	onSelect: PropTypes.func,
 	onDelete: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 	onCancel: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-	onEditCell: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-	disableCancel: PropTypes.bool,
+	onEditCell: PropTypes.func,
 	enableExportToCSV: PropTypes.bool,
 	rowLimit: PropTypes.number,
 	loading: PropTypes.bool,
 	paginated: PropTypes.bool,
+	height: PropTypes.number,
+	additionalActionButtons: PropTypes.arrayOf(
+		PropTypes.shape({
+			name: PropTypes.string,
+			icon: PropTypes.string,
+			action: PropTypes.func,
+		})
+	),
 }
 
 export default PaginatedTable

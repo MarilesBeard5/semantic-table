@@ -5,9 +5,7 @@ import PropTypes from 'prop-types'
 import { Header, TextArea, Icon, Select } from 'semantic-ui-react'
 import Cleave from 'cleave.js/react'
 //Utils
-import { formatColumn, getObjectProp } from '../utils/index'
-
-import styles from '../styles/global.module.scss'
+import { formatColumn, getObjectProp, processValue } from '../utils/index'
 
 const renderCell = (
 	column,
@@ -265,21 +263,6 @@ const renderCell = (
 	}
 }
 
-const processValue = (newValue, column) => {
-	const { type = 'text' } = column
-	switch (type) {
-		case 'text':
-			return newValue
-		case 'number':
-			return isNaN(parseInt(newValue)) ? null : newValue
-		case 'select':
-			let found = column?.options.find((option) => option.value === newValue)
-			return found ? found.value : null
-		default:
-			return newValue
-	}
-}
-
 const PaginatedTableCell = (props) => {
 	const { row, column, onEditCell, isEditable, setCanSave = false, isFocused = null } = props
 
@@ -295,21 +278,13 @@ const PaginatedTableCell = (props) => {
 	}, [row, processValue, column])
 
 	useEffect(() => {
-		const oldValue = processValue(getObjectProp(row, column.accessor), column)
-		if (isEditable)
-			if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
-				setCanSave(true)
-			}
-	}, [value, column, processValue, isEditable, row, setCanSave])
-
-	useEffect(() => {
 		if (inputRef.current) {
 			willRenderCell ? inputRef.current.focus() : inputRef.current.blur()
 		}
 	}, [inputRef, willRenderCell])
 
 	useEffect(() => {
-		isFocused(willRenderCell)
+		isFocused(willRenderCell, row)
 	}, [willRenderCell])
 
 	const onEdit = (newValue) => {
@@ -324,8 +299,9 @@ const PaginatedTableCell = (props) => {
 	return (
 		<Header
 			as="h5"
-			style={{ height: '15px' }}
-			onClick={() => {
+			style={{ height: '15px', cursor: isEditable && 'cell' }}
+			contentEditable={isEditable}
+			onFocus={() => {
 				setWillRenderCell(true)
 			}}
 		>
@@ -337,7 +313,7 @@ const PaginatedTableCell = (props) => {
 					isEditable,
 					willRenderCell,
 					handleBlur,
-					inputRef
+					inputRef,
 				)}
 			</Header.Content>
 		</Header>

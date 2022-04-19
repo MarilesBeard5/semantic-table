@@ -44,6 +44,21 @@ export const formatColumn = (format, value, datecustom) => {
 	}
 }
 
+export const processValue = (newValue, column) => {
+	const { type = 'text' } = column
+	switch (type) {
+		case 'text':
+			return newValue
+		case 'number':
+			return isNaN(parseInt(newValue)) ? null : newValue
+		case 'select':
+			let found = column?.options.find((option) => option.value === newValue)
+			return found ? found.value : null
+		default:
+			return newValue
+	}
+}
+
 /**
  * Returns a unique copy of the given object array by the specified property, ignoring
  * any other property in each object.

@@ -1,57 +1,70 @@
-import { Header } from 'semantic-ui-react'
+import { faker } from '@faker-js/faker'
+import { useEffect, useState } from 'react'
 import './index.css'
 import PaginatedTable from './lib/components/PaginatedTable'
+import { generateRows } from './lib/utils/fakes'
+
+const clientsSchema = {
+	id: '{{datatype.number}}',
+	name: '{{company.companyName}} {{company.companySuffix}}',
+	email: '{{internet.email}}',
+}
+
+const data = generateRows(50, 70, clientsSchema)
 
 function App() {
+	const [isLoading, setIsLoading] = useState(false)
+	useEffect(() => {
+		setIsLoading(true)
+		setTimeout(() => {
+			setIsLoading(false)
+		}, 1500)
+	}, [])
 	return (
 		<div className="PageContainer">
 			<PaginatedTable
+				loading={isLoading}
 				title="Example"
 				onCancel={true}
 				onAddRow={(id) => ({
-					title: 'New Title',
-					description: 'Lorem Ipsum',
-					type: 'NONE'
+					id: faker.fake('{{datatype.number}}'),
+					name: faker.fake('{{company.companyName}} {{company.companySuffix}}'),
+					email: faker.fake('{{internet.email}}'),
 				})}
-				rows={[]}
+				rows={data}
+				height={612}
+				rowLimit={15}
+				actionsActive={true}
+				actionsWidth={125}
+				onSelect={(row) => {
+					console.log(row)
+				}}
+				onDelete={(deletedRow) => {
+					console.log(deletedRow)
+				}}
 				columns={[
 					{
 						width: 250,
-						Header: 'Title',
-						accessor: 'title',
+						Header: 'Code',
+						accessor: 'id',
+						filterable: true,
+						editable: false,
+					},
+					{
+						width: 225,
+						Header: 'Name',
+						accessor: 'name',
 						filterable: true,
 						editable: true,
 					},
 					{
 						width: 225,
-						Header: 'Description',
-						accessor: 'description',
-						filterable: true,
-					},
-					{
-						width: 225,
-						Header: 'Type',
-						accessor: 'type',
-						type: 'select',
+						Header: 'Email',
+						accessor: 'email',
 						filterable: true,
 						editable: true,
-						options: [
-							{
-								text: 'FOO',
-								value: 'FOO',
-							},
-							{
-								text: 'BAR',
-								value: 'BAR',
-							},
-							{
-								text: 'NONENONENONENONENONENONE',
-								value: 'NONE',
-							},
-						],
 					},
 				]}
-				actionsWidth={200}
 			/>
 		</div>
 	)
