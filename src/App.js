@@ -42,6 +42,11 @@ function App() {
 				onDelete={(deletedRow) => {
 					console.log(deletedRow)
 				}}
+				onEditCell={({row, column, value}) => {
+					console.log(row)
+					console.log(column)
+					console.log(value)
+				}}
 				columns={[
 					{
 						width: 250,

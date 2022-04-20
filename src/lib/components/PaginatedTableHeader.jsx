@@ -22,6 +22,7 @@ const PaginatedTableHeader = (props) => {
 		setSortAccessor,
 		applyFilter = null,
 		revertFilter = null,
+		actionsHeaderText
 	} = props
 
 	//Column Header
@@ -103,7 +104,7 @@ const PaginatedTableHeader = (props) => {
 			}}
 		>
 			<tr>
-				{actionsActive && renderActionsHeaderCell('Acciones')}
+				{actionsActive && renderActionsHeaderCell(actionsHeaderText)}
 				{columns.map((column, index) =>
 					renderHeaderCell(column, column.Header)
 				)}
@@ -129,6 +130,7 @@ PaginatedTableHeader.propTypes = {
 	actionsWidth: PropTypes.number,
 	applyFilter: PropTypes.func,
 	revertFilter: PropTypes.func,
+	actionsHeaderText: PropTypes.string,
 }
 
 export default PaginatedTableHeader

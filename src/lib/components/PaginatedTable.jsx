@@ -56,6 +56,15 @@ const PaginatedTable = (props) => {
 		paginated = true,
 		additionalActionButtons = [],
 		additionalHeaderButtons = [],
+		saveButtonText = 'Guardar',
+		cancelButtonText = 'Cancelar',
+		newRowButtonText = 'Nueva Fila',
+		addButtonText = 'Nuevo',
+		removeFiltersButtonText = 'Limpiar Filtros',
+		editRowButtonText = 'Editar',
+		deleteRowButtonText = 'Borrar',
+		exportToCSVButtonText = 'Exportar a CSV',
+		actionsHeaderText = 'Acciones',
 	} = props
 
 	// Inner States
@@ -71,7 +80,7 @@ const PaginatedTable = (props) => {
 
 	const [focused, setFocused] = useState({
 		condition: false,
-		id: null
+		id: null,
 	})
 
 	//Table Dimensions
@@ -123,33 +132,32 @@ const PaginatedTable = (props) => {
 	}
 
 	const removeFilters = () => {
-		let newRows = getSortedArray(rows, {
-			order: sortOrder === 'ASC' ? sortOrder : 'DESC',
-			accessor: sortAccessor,
-		})
-		setFilteredRows(newRows)
+		setFilteredRows(rows)
 		setHasBeenFiltered(false)
 	}
 
 	const onBlurRow = (value, row, column) => {
 		let newRow = {}
-		const newRows = rows.map((r) => {
-			if (row.id === r.id) {
-				newRow = {
-					...r,
-					[column.accessor]: value,
-				}
-
-				if (onEditCell) {
-					onEditCell(newRow)
-				}
-				return newRow
-			}
-			return r
-		})
+		let newRows = []
 		const oldValue = processValue(getObjectProp(row, column.accessor), column)
 		if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
+			newRows = rows.map((r) => {
+				if (row.id === r.id) {
+					newRow = {
+						...r,
+						[column.accessor]: value,
+					}
+
+					if (onEditCell) {
+						onEditCell({ row: newRow, column, value })
+					}
+					return newRow
+				}
+				return r
+			})
 			setCanSave(true)
+		} else {
+			newRows = rows
 		}
 		setFilteredRows(newRows)
 		setRows(newRows)
@@ -171,10 +179,11 @@ const PaginatedTable = (props) => {
 	}
 
 	const onRowDelete = (row) => {
-		let truncatedData = filteredRows.filter((r) => r.id !== row.id)
+		const truncatedData = rows.filter((r) => r.id !== row.id)
 		if (onDelete && typeof onDelete == 'function') {
-			onDelete(truncatedData)
+			onDelete(row)
 		}
+		setRows(truncatedData)
 		setFilteredRows(truncatedData)
 		setCanSave(true)
 	}
@@ -370,7 +379,7 @@ const PaginatedTable = (props) => {
 			>
 				{onSelect && (
 					<Popup
-						content="Editar"
+						content={editRowButtonText}
 						trigger={
 							<Button
 								className={rowActionButton}
@@ -389,7 +398,7 @@ const PaginatedTable = (props) => {
 				)}
 				{onDelete && (
 					<Popup
-						content="Borrar"
+						content={deleteRowButtonText}
 						trigger={
 							<Button
 								className={rowActionButton}
@@ -473,7 +482,7 @@ const PaginatedTable = (props) => {
 	const isFocused = (condition, row) => {
 		setFocused({
 			condition: condition,
-			id: row.id
+			id: row.id,
 		})
 	}
 
@@ -497,7 +506,7 @@ const PaginatedTable = (props) => {
 								size="tiny"
 								type="button"
 								icon="save"
-								content="Guardar"
+								content={saveButtonText}
 								disabled={!canSave}
 							/>
 						)}
@@ -512,7 +521,7 @@ const PaginatedTable = (props) => {
 								size="tiny"
 								type="button"
 								icon="times"
-								content="Cancelar"
+								content={cancelButtonText}
 								disabled={!canSave}
 							/>
 						)}
@@ -527,7 +536,7 @@ const PaginatedTable = (props) => {
 								size="tiny"
 								type="button"
 								icon="plus"
-								content="Nuevo"
+								content={addButtonText}
 							/>
 						)}
 						{onAddRow && (
@@ -541,7 +550,7 @@ const PaginatedTable = (props) => {
 								size="tiny"
 								type="button"
 								icon="plus"
-								content="Nueva Fila"
+								content={newRowButtonText}
 							/>
 						)}
 						<Button
@@ -554,7 +563,7 @@ const PaginatedTable = (props) => {
 							size="tiny"
 							type="button"
 							icon="times"
-							content="Limpiar Filtros"
+							content={removeFiltersButtonText}
 							disabled={!hasBeenFiltered}
 						/>
 						{enableExportToCSV && (
@@ -566,7 +575,7 @@ const PaginatedTable = (props) => {
 								)}.csv`}
 							>
 								<Icon className={styles.IconLabel} name="excel file"></Icon>
-								Exportar a Excel
+								{exportToCSVButtonText}
 							</CSVLink>
 						)}
 						{additionalHeaderButtons.map((item) => {
@@ -610,6 +619,7 @@ const PaginatedTable = (props) => {
 								setSortOrder={setSortOrder}
 								sortAccessor={sortAccessor}
 								setSortAccessor={setSortAccessor}
+								actionsHeaderText={actionsHeaderText}
 							/>
 
 							<Table
@@ -629,9 +639,12 @@ const PaginatedTable = (props) => {
 											<tr
 												key={`row-${rowIndex}`}
 												className={`ui table row`}
-												style={{ 
-													backgroundColor: (focused.condition && focused.id === row.id) && '#1e56aa15'
-												 }}
+												style={{
+													backgroundColor:
+														focused.condition &&
+														focused.id === row.id &&
+														'#1e56aa15',
+												}}
 											>
 												{actionsActive && renderActionsColumn(row)}
 												{columns.map((column, index) => {
@@ -676,9 +689,10 @@ const PaginatedTable = (props) => {
 															if (!isNaN(el)) setPage(el)
 														}}
 														index={el}
-														style={{ 
-															backgroundColor: (page === (!isNaN(el) && el)) && '#1e56aa15'
-														 }}
+														style={{
+															backgroundColor:
+																page === (!isNaN(el) && el) && '#1e56aa15',
+														}}
 													>
 														{el}
 													</Menu.Item>
@@ -739,6 +753,15 @@ PaginatedTable.propTypes = {
 			action: PropTypes.func,
 		})
 	),
+	saveButtonText: PropTypes.string,
+	cancelButtonText: PropTypes.string,
+	newRowButtonText: PropTypes.string,
+	addButtonText: PropTypes.string,
+	removeFiltersButtonText: PropTypes.string,
+	editRowButtonText: PropTypes.string,
+	deleteRowButtonText: PropTypes.string,
+	exportToCSVButtonText: PropTypes.string,
+	actionsHeaderText: PropTypes.string,
 }
 
 export default PaginatedTable
