@@ -8,6 +8,7 @@ const clientsSchema = {
 	id: '{{datatype.number}}',
 	name: '{{company.companyName}} {{company.companySuffix}}',
 	email: '{{internet.email}}',
+	date: '{{date.between}}'
 }
 
 const data = generateRows(50, 70, clientsSchema)
@@ -66,6 +67,14 @@ function App() {
 						width: 225,
 						Header: 'Email',
 						accessor: 'email',
+						filterable: true,
+						editable: true,
+					},
+					{
+						width: 225,
+						Header: 'Date',
+						accessor: 'date',
+						type: 'date',
 						filterable: true,
 						editable: true,
 					},

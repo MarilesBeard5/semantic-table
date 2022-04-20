@@ -14,7 +14,7 @@ import {
 } from 'semantic-ui-react'
 
 //Utils
-import { getObjectProp, getUniqArray } from '../utils/index'
+import { formatColumn, getObjectProp, getUniqArray } from '../utils/index'
 
 // External Libraries
 import _ from 'lodash'
@@ -45,15 +45,21 @@ const ColumnFilterCard = (props) => {
 	const getOptionArray = (column) => {
 		return getUniqArray(options, column.accessor).map((option) => {
 			let value = null
-			if (column.type == 'select') {
-				const optionValue = getObjectProp(option, column.accessor)
-				if (optionValue) {
-					value = column?.options.find(
-						(selectableOption) => selectableOption.value == optionValue
-					).text
-				}
-			} else {
-				value = getObjectProp(option, column.accessor)
+			switch (column.type) {
+				case 'select':
+					const optionValue = getObjectProp(option, column.accessor)
+					if (optionValue) {
+						value = column?.options.find(
+							(selectableOption) => selectableOption.value == optionValue
+						).text
+					}
+					break
+				case 'date':
+					value = formatColumn('date', getObjectProp(option, column.accessor))
+					break
+				default:
+					value = getObjectProp(option, column.accessor)
+					break
 			}
 			return {
 				label: value,
@@ -167,8 +173,7 @@ const ColumnFilterCard = (props) => {
 				labelPosition="left"
 				type="button"
 				onClick={(e) => {
-					onApply &&
-						onApply(column, currentOptions, sortAccessor, sortOrder)
+					onApply && onApply(column, currentOptions, sortAccessor, sortOrder)
 				}}
 				disabled={!canApply}
 			/>

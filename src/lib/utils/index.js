@@ -33,7 +33,7 @@ export const formatColumn = (format, value, datecustom) => {
 			if (!value) {
 				return ''
 			}
-			return moment(value).format('DD-MM-YYYY')
+			return moment(value).format('DD/MM/YYYY')
 		case 'datecustom':
 			if (!value) {
 				return ''

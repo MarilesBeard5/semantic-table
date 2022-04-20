@@ -97,6 +97,7 @@ const data = [
 | deleteRowButtonText     | string             | Custom text for deleteRow button                                                                                                                                                                                                                                                 |
 | exportToCSVButtonText   | string             | Custom text for exportToCSV button                                                                                                                                                                                                                                               |
 | actionsHeaderText       | string             | Custom text for actions header                                                                                                                                                                                                                                                   |
+| numberOfRecordsText     | string             | Custom text for total records label                                                                                                                                                                                                                                              |
 
 ## Loading
 

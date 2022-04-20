@@ -65,6 +65,7 @@ const PaginatedTable = (props) => {
 		deleteRowButtonText = 'Borrar',
 		exportToCSVButtonText = 'Exportar a CSV',
 		actionsHeaderText = 'Acciones',
+		numberOfRecordsText = 'Total: ',
 	} = props
 
 	// Inner States
@@ -479,6 +480,10 @@ const PaginatedTable = (props) => {
 
 	const hasRows = rows.length > 0 ? rows.length > 0 : props.rows.length > 0
 
+	const numberOfRecords = useMemo(() => {
+		return filteredRows.filter((r) => r.checked != false).length
+	}, [filteredRows])
+
 	const isFocused = (condition, row) => {
 		setFocused({
 			condition: condition,
@@ -578,7 +583,7 @@ const PaginatedTable = (props) => {
 								{exportToCSVButtonText}
 							</CSVLink>
 						)}
-						{additionalHeaderButtons.map((item) => {
+						{/* {additionalHeaderButtons.map((item) => {
 							return (
 								<Button
 									className={tableActionButton}
@@ -594,7 +599,7 @@ const PaginatedTable = (props) => {
 									disabled={item.disabled ? item.disabled : false}
 								/>
 							)
-						})}
+						})} */}
 					</Grid.Row>
 				</Grid>
 				{hasRows && !loading && (
@@ -676,11 +681,21 @@ const PaginatedTable = (props) => {
 								})}
 							</Table>
 						</div>
-						{paginated && (
-							<Grid style={{ margin: '1vh' }}>
-								<Grid.Row columns={1}>
-									<Grid.Column stretched>
-										<Table.Footer>
+						<Grid style={{ margin: '1vh' }}>
+							<Grid.Row columns={1}>
+								<Grid.Column stretched>
+									<Table.Footer>
+										<Menu floated="left">
+											<Menu.Item
+												key={'number-of-records-item'}
+												style={{
+													backgroundColor: '#1e56aa15',
+												}}
+											>
+												{numberOfRecordsText} {numberOfRecords}
+											</Menu.Item>
+										</Menu>
+										{paginated && (
 											<Menu floated="right" pagination>
 												{range.map((el, index) => (
 													<Menu.Item
@@ -698,11 +713,11 @@ const PaginatedTable = (props) => {
 													</Menu.Item>
 												))}
 											</Menu>
-										</Table.Footer>
-									</Grid.Column>
-								</Grid.Row>
-							</Grid>
-						)}
+										)}
+									</Table.Footer>
+								</Grid.Column>
+							</Grid.Row>
+						</Grid>
 					</>
 				)}
 			</>
@@ -762,6 +777,7 @@ PaginatedTable.propTypes = {
 	deleteRowButtonText: PropTypes.string,
 	exportToCSVButtonText: PropTypes.string,
 	actionsHeaderText: PropTypes.string,
+	numberOfRecordsText: PropTypes.string,
 }
 
 export default PaginatedTable
