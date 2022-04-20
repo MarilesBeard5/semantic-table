@@ -73,11 +73,6 @@ const ColumnFilterCard = (props) => {
 		setSortOrder('DESC')
 	}
 
-	useEffect(() => {
-		canApply &&
-			onApply(column, currentOptions, sortAccessor, sortOrder)
-	}, [sortOrder, sortAccessor, canApply])
-
 	const allOptionsChecked = useMemo(() => {
 		return currentOptions.every((option) => {
 			return option.checked
@@ -233,7 +228,7 @@ const ColumnFilterCard = (props) => {
 	const renderInput = (type) => (
 		<Input
 			size="large"
-			placeholder={`Buscar por ${column.Header}`}
+			placeholder={`${column.Header}`}
 			value={filters[column.accessor]}
 			onChange={(e) => {
 				const value = e.target.value
