@@ -1,14 +1,19 @@
 {
 	"name": "semantic-table",
 	"description": "SemanticTable React Components",
-	"author": "MarilesBeard5",
+	"author": "MarilesBeard5 <marilesbeard5@gmail.com> (https://www.linkedin.com/in/gmariles5/)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/MarilesBeard5/semantic-table/issues",
+		"email": "marilesbeard5@gmail.com"
+	},
 	"keywords": [
 		"react",
 		"components",
 		"table",
 		"semantic-ui"
 	],
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"private": false,
 	"main": "dist/index.js",
 	"module": "dist/index.js",
