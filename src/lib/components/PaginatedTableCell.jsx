@@ -6,6 +6,7 @@ import { Header, TextArea, Icon, Select } from 'semantic-ui-react'
 import Cleave from 'cleave.js/react'
 //Utils
 import { formatColumn, getObjectProp, processValue } from '../utils/index'
+import moment from 'moment'
 
 const renderCell = (
 	column,
@@ -180,10 +181,11 @@ const renderCell = (
 					/>
 				)
 			case 'date':
+				const date = moment(value).format('YYYY-MM-DD')
 				return (
 					<input
 						className="InputField"
-						value={value ? value : ''}
+						value={date ? date : ''}
 						type={type}
 						onChange={(e) => {
 							let newValue = e.target.value
