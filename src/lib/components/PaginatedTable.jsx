@@ -142,7 +142,7 @@ const PaginatedTable = (props) => {
 		let newRows = []
 		const oldValue = processValue(getObjectProp(row, column.accessor), column)
 		if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
-			newRows = rows.map((r) => {
+			newRows = filteredRows.map((r) => {
 				if (row.id === r.id) {
 					newRow = {
 						...r,
@@ -157,11 +157,9 @@ const PaginatedTable = (props) => {
 				return r
 			})
 			setCanSave(true)
-		} else {
-			newRows = rows
+			setFilteredRows(newRows)
+			setRows(newRows)
 		}
-		setFilteredRows(newRows)
-		setRows(newRows)
 	}
 
 	const onCancelEdition = () => {

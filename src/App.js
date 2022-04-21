@@ -31,6 +31,7 @@ function App() {
 					id: faker.fake('{{datatype.number}}'),
 					name: faker.fake('{{company.companyName}} {{company.companySuffix}}'),
 					email: faker.fake('{{internet.email}}'),
+					date: faker.fake('{{date.between}}')
 				})}
 				rows={data}
 				height={612}
