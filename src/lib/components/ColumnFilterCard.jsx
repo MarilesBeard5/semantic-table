@@ -97,6 +97,7 @@ const ColumnFilterCard = (props) => {
 				switch (type) {
 					case 'text':
 					case 'number':
+					case 'date':
 						return (option.label ? option.label : '')
 							.toString()
 							.toLocaleLowerCase()
