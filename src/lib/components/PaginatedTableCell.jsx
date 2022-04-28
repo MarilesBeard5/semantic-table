@@ -240,7 +240,7 @@ const renderCell = (
 						? column.customBooleanText?.true
 						: column.customBooleanText?.false
 				} else {
-					return <Icon size="large" name={value ? 'check' : 'close'} />
+					return <Icon size="large" name={value == true ? 'check' : 'close'} />
 				}
 			case 'textarea':
 				return (
@@ -307,7 +307,7 @@ const PaginatedTableCell = (props) => {
 				setWillRenderCell(true)
 			}}
 		>
-			<Header.Content style={{ display: 'block' }}>
+			<Header.Content style={{ display: 'block', textAlign: column.type == 'boolean' && 'center' }}>
 				{renderCell(
 					column,
 					value,
