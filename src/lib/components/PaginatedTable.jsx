@@ -21,7 +21,7 @@ import PaginatedTableHeader from './PaginatedTableHeader'
 import PaginatedTableCell from './PaginatedTableCell'
 
 //Utils
-import { getObjectProp, getSortedArray, processValue } from '../utils/index'
+import { getObjectProp, getSortedArray, processValue, uuid } from '../utils/index'
 
 //External
 import _ from 'lodash'
@@ -66,6 +66,8 @@ const PaginatedTable = (props) => {
 		exportToCSVButtonText = 'Exportar a CSV',
 		actionsHeaderText = 'Acciones',
 		numberOfRecordsText = 'Total: ',
+		showRecords = false,
+		hideRemoveFiltersButton = false,
 	} = props
 
 	// Inner States
@@ -232,7 +234,7 @@ const PaginatedTable = (props) => {
 	}
 
 	const onAddNewRow = () => {
-		const id = moment().unix().toString().slice(3)
+		const id = uuid()
 		if (onAddRow && typeof onAddRow == 'function') {
 			const newRowData = onAddRow(id)
 			const newRows = [
@@ -556,19 +558,21 @@ const PaginatedTable = (props) => {
 								content={newRowButtonText}
 							/>
 						)}
-						<Button
-							className={tableActionButton}
-							style={{ background: 'transparent', color: 'blue' }}
-							onClick={() => {
-								removeFilters()
-							}}
-							color="blue"
-							size="tiny"
-							type="button"
-							icon="times"
-							content={removeFiltersButtonText}
-							disabled={!hasBeenFiltered}
-						/>
+						{!hideRemoveFiltersButton && (
+							<Button
+								className={tableActionButton}
+								style={{ background: 'transparent', color: 'blue' }}
+								onClick={() => {
+									removeFilters()
+								}}
+								color="blue"
+								size="tiny"
+								type="button"
+								icon="times"
+								content={removeFiltersButtonText}
+								disabled={!hasBeenFiltered}
+							/>
+						)}
 						{enableExportToCSV && (
 							<CSVLink
 								className={tableActionButton}
@@ -636,9 +640,9 @@ const PaginatedTable = (props) => {
 								definition
 								unstackable
 							>
-								{(paginated ? slice : filteredRows).map((row, rowIndex) => {
+								{((paginated != false) ? slice : filteredRows).map((row, rowIndex) => {
 									return (
-										row.checked != 'false' && (
+										row.checked != false && (
 											<tr
 												key={`row-${rowIndex}`}
 												className={`ui table row`}
@@ -683,16 +687,18 @@ const PaginatedTable = (props) => {
 							<Grid.Row columns={1}>
 								<Grid.Column stretched>
 									<Table.Footer>
-										<Menu floated="left">
-											<Menu.Item
-												key={'number-of-records-item'}
-												style={{
-													backgroundColor: '#1e56aa15',
-												}}
-											>
-												{numberOfRecordsText} {numberOfRecords}
-											</Menu.Item>
-										</Menu>
+										{showRecords && (
+											<Menu floated="left">
+												<Menu.Item
+													key={'number-of-records-item'}
+													style={{
+														backgroundColor: '#1e56aa15',
+													}}
+												>
+													{numberOfRecordsText} {numberOfRecords}
+												</Menu.Item>
+											</Menu>
+										)}
 										{paginated && (
 											<Menu floated="right" pagination>
 												{range.map((el, index) => (
@@ -776,6 +782,8 @@ PaginatedTable.propTypes = {
 	exportToCSVButtonText: PropTypes.string,
 	actionsHeaderText: PropTypes.string,
 	numberOfRecordsText: PropTypes.string,
+	showRecords: PropTypes.bool,
+	hideRemoveFiltersButton: PropTypes.bool,
 }
 
 export default PaginatedTable
