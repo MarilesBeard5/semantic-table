@@ -606,7 +606,7 @@ const PaginatedTable = (props) => {
 									className={tableActionButton}
 									style={{ background: 'transparent', color: 'blue' }}
 									onClick={(e) => {
-										item.action(rows)
+										item.action(filteredRows)
 									}}
 									color="blue"
 									size="tiny"
