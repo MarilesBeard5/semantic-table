@@ -21,7 +21,12 @@ import PaginatedTableHeader from './PaginatedTableHeader'
 import PaginatedTableCell from './PaginatedTableCell'
 
 //Utils
-import { getObjectProp, getSortedArray, processValue, uuid } from '../utils/index'
+import {
+	getObjectProp,
+	getSortedArray,
+	processValue,
+	uuid,
+} from '../utils/index'
 
 //External
 import _ from 'lodash'
@@ -67,6 +72,8 @@ const PaginatedTable = (props) => {
 		actionsHeaderText = 'Acciones',
 		numberOfRecordsText = 'Total: ',
 		showRecords = false,
+		showRecordsPerPage = false,
+		numberOfRecordsPerPageText = 'En Página: ',
 		hideRemoveFiltersButton = false,
 	} = props
 
@@ -271,7 +278,7 @@ const PaginatedTable = (props) => {
 
 	const calculatedRange = useMemo(() => {
 		const limit = rowLimit
-		const length = filteredRows.filter((row) => row.checked).length
+		const length = filteredRows.filter((row) => row.checked != false).length
 		const totalPageCount = Math.ceil(length / limit)
 
 		// Pages count is determined as siblingCount + firstPage + lastPage + currentPage + 2*DOTS
@@ -314,14 +321,14 @@ const PaginatedTable = (props) => {
 	}, [filteredRows, rowLimit, page])
 
 	useEffect(() => {
-		if (paginated) {
+		if (paginated === true) {
 			setRange(calculatedRange)
 			const slicedData = filteredRows
-				.filter((row) => row.checked)
+				.filter((row) => row.checked != false)
 				.slice((page - 1) * rowLimit, page * rowLimit)
 			setSlice(slicedData)
 		}
-	}, [filteredRows, page, calculatedRange, rowLimit, paginated])
+	}, [filteredRows, page, calculatedRange, rowLimit, paginated, setSlice])
 
 	/**
 	 * ==================================================
@@ -345,7 +352,7 @@ const PaginatedTable = (props) => {
 			accessors.push(c.accessor)
 		})
 		rowsToSend = filteredRows
-			.filter((row) => row.checked)
+			.filter((row) => row.checked != false)
 			.map((r) => {
 				return columns.map((c) => {
 					if (accessors.includes(c.accessor)) {
@@ -484,6 +491,10 @@ const PaginatedTable = (props) => {
 		return filteredRows.filter((r) => r.checked != false).length
 	}, [filteredRows])
 
+	const recordsPerPage = useMemo(() => {
+		return paginated ? slice.filter((r) => r.checked != false).length : null
+	}, [slice])
+
 	const isFocused = (condition, row) => {
 		setFocused({
 			condition: condition,
@@ -498,7 +509,11 @@ const PaginatedTable = (props) => {
 					<Grid.Row
 						verticalAlign="middle"
 						textAlign="left"
-						style={{ paddingBottom: '10px', width: innerWidth / 1.5 }}
+						style={{
+							paddingBottom: '10px',
+							width: `${innerWidth / 1.5}px !important`,
+						}}
+						columns={1}
 					>
 						{onSave && (
 							<Button
@@ -585,7 +600,7 @@ const PaginatedTable = (props) => {
 								{exportToCSVButtonText}
 							</CSVLink>
 						)}
-						{/* {additionalHeaderButtons.map((item) => {
+						{additionalHeaderButtons.map((item) => {
 							return (
 								<Button
 									className={tableActionButton}
@@ -601,7 +616,7 @@ const PaginatedTable = (props) => {
 									disabled={item.disabled ? item.disabled : false}
 								/>
 							)
-						})} */}
+						})}
 					</Grid.Row>
 				</Grid>
 				{hasRows && !loading && (
@@ -640,47 +655,49 @@ const PaginatedTable = (props) => {
 								definition
 								unstackable
 							>
-								{((paginated != false) ? slice : filteredRows).map((row, rowIndex) => {
-									return (
-										row.checked != false && (
-											<tr
-												key={`row-${rowIndex}`}
-												className={`ui table row`}
-												style={{
-													backgroundColor:
-														focused.condition &&
-														focused.id === row.id &&
-														'#1e56aa15',
-												}}
-											>
-												{actionsActive && renderActionsColumn(row)}
-												{columns.map((column, index) => {
-													const colorIsAFunction =
-														typeof column.color == 'function'
-													const backgroundColor = colorIsAFunction
-														? column.color(row)
-														: column.color
-													return (
-														<td
-															key={`column-${rowIndex + ' ' + index}`}
-															style={{
-																overflow:
-																	column.type == 'select' && focused.condition
-																		? 'visible'
-																		: 'auto',
-																width: `${column.width}px`,
-																maxWidth: `${column.width}px`,
-																backgroundColor: backgroundColor,
-															}}
-														>
-															{renderCell(row, column)}
-														</td>
-													)
-												})}
-											</tr>
+								{(paginated != false ? slice : filteredRows).map(
+									(row, rowIndex) => {
+										return (
+											row.checked != false && (
+												<tr
+													key={`row-${rowIndex}`}
+													className={`ui table row`}
+													style={{
+														backgroundColor:
+															focused.condition &&
+															focused.id === row.id &&
+															'#1e56aa15',
+													}}
+												>
+													{actionsActive && renderActionsColumn(row)}
+													{columns.map((column, index) => {
+														const colorIsAFunction =
+															typeof column.color == 'function'
+														const backgroundColor = colorIsAFunction
+															? column.color(row)
+															: column.color
+														return (
+															<td
+																key={`column-${rowIndex + ' ' + index}`}
+																style={{
+																	overflow:
+																		column.type == 'select' && focused.condition
+																			? 'visible'
+																			: 'auto',
+																	width: `${column.width}px`,
+																	maxWidth: `${column.width}px`,
+																	backgroundColor: backgroundColor,
+																}}
+															>
+																{renderCell(row, column)}
+															</td>
+														)
+													})}
+												</tr>
+											)
 										)
-									)
-								})}
+									}
+								)}
 							</Table>
 						</div>
 						<Grid style={{ margin: '1vh' }}>
@@ -698,6 +715,20 @@ const PaginatedTable = (props) => {
 													{numberOfRecordsText} {numberOfRecords}
 												</Menu.Item>
 											</Menu>
+										)}
+										{showRecordsPerPage && (
+											<Table.Footer>
+												<Menu floated="right">
+													<Menu.Item
+														key={'number-of-records-per-page-item'}
+														style={{
+															backgroundColor: '#1e56aa15',
+														}}
+													>
+														{numberOfRecordsPerPageText} {recordsPerPage}
+													</Menu.Item>
+												</Menu>
+											</Table.Footer>
 										)}
 										{paginated && (
 											<Menu floated="right" pagination>
@@ -772,6 +803,14 @@ PaginatedTable.propTypes = {
 			action: PropTypes.func,
 		})
 	),
+	additionalHeaderButtons: PropTypes.arrayOf(
+		PropTypes.shape({
+			label: PropTypes.string,
+			icon: PropTypes.string,
+			action: PropTypes.func,
+			disabled: PropTypes.bool
+		})
+	),
 	saveButtonText: PropTypes.string,
 	cancelButtonText: PropTypes.string,
 	newRowButtonText: PropTypes.string,
@@ -784,6 +823,8 @@ PaginatedTable.propTypes = {
 	numberOfRecordsText: PropTypes.string,
 	showRecords: PropTypes.bool,
 	hideRemoveFiltersButton: PropTypes.bool,
+	showRecordsPerPage: PropTypes.bool,
+	numberOfRecordsPerPageText: PropTypes.string,
 }
 
 export default PaginatedTable

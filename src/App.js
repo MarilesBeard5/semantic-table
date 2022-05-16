@@ -15,7 +15,7 @@ const clientsSchema = {
 
 function App() {
 	const [isLoading, setIsLoading] = useState(false)
-	const [data, setData] = useState(generateRows(5, 10, clientsSchema))
+	const [data, setData] = useState(generateRows(350, 560, clientsSchema))
 	useEffect(() => {
 		setIsLoading(true)
 		setTimeout(() => {
@@ -30,8 +30,9 @@ function App() {
 			<PaginatedTable
 				loading={isLoading}
 				title="Example"
-				paginated={false}
 				hideRemoveFiltersButton={true}
+				showRecords
+				showRecordsPerPage
 				onCancel={true}
 				onAddRow={(id) => ({
 					id: id,
@@ -41,7 +42,7 @@ function App() {
 				})}
 				rows={data}
 				height={612}
-				rowLimit={15}
+				rowLimit={20}
 				actionsActive={true}
 				actionsWidth={125}
 				onSelect={(row) => {
@@ -55,6 +56,17 @@ function App() {
 					console.log(column)
 					console.log(value)
 				}}
+				additionalHeaderButtons={
+					[
+						{
+							label: 'Prueba',
+							icon: 'search',
+							action: (rows) => {
+								console.log(rows)
+							}
+						}
+					]
+				}
 				columns={[
 					{
 						width: 250,
