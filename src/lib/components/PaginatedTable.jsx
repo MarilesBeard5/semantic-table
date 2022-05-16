@@ -75,6 +75,7 @@ const PaginatedTable = (props) => {
 		showRecordsPerPage = false,
 		numberOfRecordsPerPageText = 'En Página: ',
 		hideRemoveFiltersButton = false,
+		enableExternalSave = false,
 	} = props
 
 	// Inner States
@@ -527,7 +528,7 @@ const PaginatedTable = (props) => {
 								type="button"
 								icon="save"
 								content={saveButtonText}
-								disabled={!canSave}
+								disabled={!canSave && !enableExternalSave}
 							/>
 						)}
 						{onCancel && (
@@ -825,6 +826,7 @@ PaginatedTable.propTypes = {
 	hideRemoveFiltersButton: PropTypes.bool,
 	showRecordsPerPage: PropTypes.bool,
 	numberOfRecordsPerPageText: PropTypes.string,
+	enableExternalSave: PropTypes.bool,
 }
 
 export default PaginatedTable

@@ -34,6 +34,7 @@ function App() {
 				showRecords
 				showRecordsPerPage
 				onCancel={true}
+				onSave={true}
 				onAddRow={(id) => ({
 					id: id,
 					name: faker.fake('{{company.companyName}} {{company.companySuffix}}'),
@@ -48,6 +49,7 @@ function App() {
 				onSelect={(row) => {
 					console.log(row)
 				}}
+				enableExternalSave={false}
 				onDelete={(deletedRow) => {
 					console.log(deletedRow)
 				}}
