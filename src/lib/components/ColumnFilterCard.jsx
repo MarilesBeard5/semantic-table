@@ -63,7 +63,7 @@ const ColumnFilterCard = (props) => {
 			}
 			return {
 				label: value,
-				checked: option.checked,
+				checked: option.checked != false,
 				...option,
 			}
 		})
@@ -81,7 +81,7 @@ const ColumnFilterCard = (props) => {
 
 	const allOptionsChecked = useMemo(() => {
 		return currentOptions.every((option) => {
-			return option.checked
+			return option.checked != false
 		})
 	}, [filteredOptions])
 
@@ -126,7 +126,7 @@ const ColumnFilterCard = (props) => {
 				if (option.id == prev.id) {
 					return {
 						...prev,
-						checked: !option.checked,
+						checked: !(option.checked != false),
 					}
 				}
 				return prev
@@ -158,7 +158,7 @@ const ColumnFilterCard = (props) => {
 						onChange={(value) => {
 							handleCheckChange(item)
 						}}
-						checked={item.checked}
+						checked={item.checked != false}
 					/>
 				</List.Item>
 			)

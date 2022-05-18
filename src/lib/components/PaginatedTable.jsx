@@ -108,12 +108,7 @@ const PaginatedTable = (props) => {
 	 */
 
 	useEffect(() => {
-		const localRows = (props.rows ?? []).map((row) => {
-			return {
-				...row,
-				checked: true,
-			}
-		})
+		const localRows = (props.rows ?? [])
 		setFilteredRows(localRows)
 		setRows(localRows)
 	}, [props.rows])
@@ -173,12 +168,7 @@ const PaginatedTable = (props) => {
 	}
 
 	const onCancelEdition = () => {
-		const localRows = (props.rows ?? []).map((row) => {
-			return {
-				...row,
-				checked: true,
-			}
-		})
+		const localRows = (props.rows ?? [])
 		setFilteredRows(localRows)
 		setRows(localRows)
 		if (onCancel && typeof onCancel == 'function') {
