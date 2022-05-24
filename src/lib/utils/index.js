@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import Decimal from "decimal.js"
 import moment from 'moment'
 import 'moment/locale/es'
 moment.locale('es')
@@ -55,7 +56,7 @@ export const processValue = (newValue, column) => {
 			let found = column?.options.find((option) => option.value === newValue)
 			return found ? found.value : null
 		case 'boolean':
-			return  newValue == 'true'
+			return newValue == 'true' ? 'true' : 'false'
 		default:
 			return newValue
 	}
@@ -143,3 +144,11 @@ export const uuid = function () {
     });
     return uuid;
 }
+
+export const calculateSimpleTotal = (array, prop) => {
+	return array.reduce((prev, curr) => {
+	   prev = new Decimal(prev)
+	   let quantity = new Decimal(curr[prop] ?? 0)
+	   return prev.plus(quantity)
+	}, 0)
+ }

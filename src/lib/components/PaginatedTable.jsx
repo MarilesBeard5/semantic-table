@@ -22,6 +22,7 @@ import PaginatedTableCell from './PaginatedTableCell'
 
 //Utils
 import {
+	calculateSimpleTotal,
 	getObjectProp,
 	getSortedArray,
 	processValue,
@@ -31,10 +32,11 @@ import {
 //External
 import _ from 'lodash'
 import { CSVLink } from 'react-csv'
+import Decimal from 'decimal.js'
+import moment from 'moment'
 
 //Virtualized Rows Size
 import { useWindowDimensions } from './WindowSize'
-import moment from 'moment'
 
 const rowActionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
 const tableActionButton =
@@ -101,6 +103,14 @@ const PaginatedTable = (props) => {
 		return props.height ? props.height : innerHeight / 2
 	}, [props.height, innerHeight])
 
+	const tableWidth = useMemo(() => {
+		return props.width
+			? props.width
+			: calculateSimpleTotal(columns, 'width').plus(
+					new Decimal(actionsWidth + 25)
+			  )
+	}, [props.width, columns])
+
 	/**
 	 * =====================================================================
 	 * LOGICA
@@ -108,7 +118,7 @@ const PaginatedTable = (props) => {
 	 */
 
 	useEffect(() => {
-		const localRows = (props.rows ?? [])
+		const localRows = props.rows ?? []
 		setFilteredRows(localRows)
 		setRows(localRows)
 	}, [props.rows])
@@ -146,7 +156,7 @@ const PaginatedTable = (props) => {
 		let newRow = {}
 		let newRows = []
 		const oldValue = processValue(getObjectProp(row, column.accessor), column)
-		if (JSON.stringify(oldValue) !== JSON.stringify(value)) {
+		if (oldValue !== value) {
 			newRows = filteredRows.map((r) => {
 				if (row.id === r.id) {
 					newRow = {
@@ -168,7 +178,7 @@ const PaginatedTable = (props) => {
 	}
 
 	const onCancelEdition = () => {
-		const localRows = (props.rows ?? [])
+		const localRows = props.rows ?? []
 		setFilteredRows(localRows)
 		setRows(localRows)
 		if (onCancel && typeof onCancel == 'function') {
@@ -369,7 +379,7 @@ const PaginatedTable = (props) => {
 	const renderActionsColumn = (row) => {
 		return (
 			<td
-				className="ui center aligned"
+				className='ui center aligned'
 				style={{
 					width: `${actionsWidth}px`,
 					flex: `${actionsWidth} 0 auto`,
@@ -385,14 +395,14 @@ const PaginatedTable = (props) => {
 								onClick={() => {
 									typeof onSelect == 'function' && onSelect(row)
 								}}
-								color="blue"
-								size="tiny"
-								type="button"
-								icon="edit"
+								color='blue'
+								size='tiny'
+								type='button'
+								icon='edit'
 								tabIndex={-1}
 							/>
 						}
-						on="hover"
+						on='hover'
 					/>
 				)}
 				{onDelete && (
@@ -404,14 +414,14 @@ const PaginatedTable = (props) => {
 								onClick={() => {
 									onRowDelete(row)
 								}}
-								color="blue"
-								size="tiny"
-								type="button"
-								icon="trash"
+								color='blue'
+								size='tiny'
+								type='button'
+								icon='trash'
 								tabIndex={-1}
 							/>
 						}
-						on="hover"
+						on='hover'
 					/>
 				)}
 				{additionalActionButtons.map((action, index) => {
@@ -425,13 +435,13 @@ const PaginatedTable = (props) => {
 									onClick={() => {
 										action.action(row)
 									}}
-									color="blue"
-									size="tiny"
-									type="button"
+									color='blue'
+									size='tiny'
+									type='button'
 									icon={action.icon}
 								/>
 							}
-							on="hover"
+							on='hover'
 						/>
 					)
 				})}
@@ -458,8 +468,8 @@ const PaginatedTable = (props) => {
 	const renderNoContent = (
 		<Segment>
 			<Statistic>
-				<Label attached="top">
-					<Header content="No hay Datos" />
+				<Label attached='top'>
+					<Header content='No hay Datos' />
 				</Label>
 			</Statistic>
 		</Segment>
@@ -469,8 +479,8 @@ const PaginatedTable = (props) => {
 	const renderLoading = (
 		<Segment>
 			<Statistic>
-				<Label attached="top">
-					<Header content="Cargando" />
+				<Label attached='top'>
+					<Header content='Cargando' />
 				</Label>
 			</Statistic>
 		</Segment>
@@ -498,8 +508,8 @@ const PaginatedTable = (props) => {
 			<>
 				<Grid stackable padded>
 					<Grid.Row
-						verticalAlign="middle"
-						textAlign="left"
+						verticalAlign='middle'
+						textAlign='left'
 						style={{
 							paddingBottom: '10px',
 							width: `${innerWidth / 1.5}px !important`,
@@ -513,10 +523,10 @@ const PaginatedTable = (props) => {
 								onClick={() => {
 									onSaveRows()
 								}}
-								color="blue"
-								size="tiny"
-								type="button"
-								icon="save"
+								color='blue'
+								size='tiny'
+								type='button'
+								icon='save'
 								content={saveButtonText}
 								disabled={!canSave && !enableExternalSave}
 							/>
@@ -528,10 +538,10 @@ const PaginatedTable = (props) => {
 								onClick={() => {
 									onCancelEdition()
 								}}
-								color="blue"
-								size="tiny"
-								type="button"
-								icon="times"
+								color='blue'
+								size='tiny'
+								type='button'
+								icon='times'
 								content={cancelButtonText}
 								disabled={!canSave}
 							/>
@@ -543,10 +553,10 @@ const PaginatedTable = (props) => {
 								onClick={() => {
 									onAdd()
 								}}
-								color="blue"
-								size="tiny"
-								type="button"
-								icon="plus"
+								color='blue'
+								size='tiny'
+								type='button'
+								icon='plus'
 								content={addButtonText}
 							/>
 						)}
@@ -557,10 +567,10 @@ const PaginatedTable = (props) => {
 								onClick={() => {
 									onAddNewRow()
 								}}
-								color="blue"
-								size="tiny"
-								type="button"
-								icon="plus"
+								color='blue'
+								size='tiny'
+								type='button'
+								icon='plus'
 								content={newRowButtonText}
 							/>
 						)}
@@ -571,10 +581,10 @@ const PaginatedTable = (props) => {
 								onClick={() => {
 									removeFilters()
 								}}
-								color="blue"
-								size="tiny"
-								type="button"
-								icon="times"
+								color='blue'
+								size='tiny'
+								type='button'
+								icon='times'
 								content={removeFiltersButtonText}
 								disabled={!hasBeenFiltered}
 							/>
@@ -587,7 +597,7 @@ const PaginatedTable = (props) => {
 									'DD/MM/YYYY'
 								)}.csv`}
 							>
-								<Icon className={styles.IconLabel} name="excel file"></Icon>
+								<Icon className={styles.IconLabel} name='excel file'></Icon>
 								{exportToCSVButtonText}
 							</CSVLink>
 						)}
@@ -599,9 +609,9 @@ const PaginatedTable = (props) => {
 									onClick={(e) => {
 										item.action(filteredRows)
 									}}
-									color="blue"
-									size="tiny"
-									type="button"
+									color='blue'
+									size='tiny'
+									type='button'
 									content={item.label}
 									icon={item.icon}
 									disabled={item.disabled ? item.disabled : false}
@@ -615,7 +625,7 @@ const PaginatedTable = (props) => {
 						<div
 							style={{
 								maxHeight: innerHeight / 1.35,
-								width: innerWidth / 1.05,
+								width: `${tableWidth}px`,
 								height: tableHeight,
 								overflowX: 'auto',
 							}}
@@ -636,7 +646,7 @@ const PaginatedTable = (props) => {
 							/>
 
 							<Table
-								className="ui celled fixed single line very compact table"
+								className='ui celled fixed single line very compact table'
 								style={{
 									display: 'block',
 									tableLayout: 'fixed',
@@ -691,59 +701,78 @@ const PaginatedTable = (props) => {
 								)}
 							</Table>
 						</div>
-						<Grid style={{ margin: '1vh' }}>
-							<Grid.Row columns={1}>
-								<Grid.Column stretched>
-									<Table.Footer>
-										{showRecords && (
-											<Menu floated="left">
-												<Menu.Item
-													key={'number-of-records-item'}
-													style={{
-														backgroundColor: '#1e56aa15',
-													}}
-												>
-													{numberOfRecordsText} {numberOfRecords}
-												</Menu.Item>
-											</Menu>
-										)}
-										{showRecordsPerPage && (
-											<Table.Footer>
-												<Menu floated="right">
+						<div
+							style={{
+								width: tableWidth,
+								overflowX: 'auto',
+							}}
+						>
+							<Grid stackable style={{ margin: '1vh' }}>
+								<Grid.Row columns={1}>
+									<Grid.Column stretched>
+										<Table.Footer>
+											{showRecords && (
+												<Menu floated='left' style={{ marginBottom: '10px' }}>
 													<Menu.Item
-														key={'number-of-records-per-page-item'}
+														key={'number-of-records-item'}
 														style={{
 															backgroundColor: '#1e56aa15',
 														}}
 													>
-														{numberOfRecordsPerPageText} {recordsPerPage}
+														{numberOfRecordsText} {numberOfRecords}
 													</Menu.Item>
 												</Menu>
-											</Table.Footer>
-										)}
-										{paginated && (
-											<Menu floated="right" pagination>
-												{range.map((el, index) => (
-													<Menu.Item
-														key={`menu-item-${el}`}
-														onClick={() => {
-															if (!isNaN(el)) setPage(el)
-														}}
-														index={el}
-														style={{
-															backgroundColor:
-																page === (!isNaN(el) && el) && '#1e56aa15',
-														}}
+											)}
+											{showRecordsPerPage && (
+												<Table.Footer>
+													<Menu
+														floated='right'
+														style={{ marginBottom: '10px' }}
 													>
-														{el}
-													</Menu.Item>
-												))}
-											</Menu>
-										)}
-									</Table.Footer>
-								</Grid.Column>
-							</Grid.Row>
-						</Grid>
+														<Menu.Item
+															key={'number-of-records-per-page-item'}
+															style={{
+																backgroundColor: '#1e56aa15',
+															}}
+														>
+															{numberOfRecordsPerPageText} {recordsPerPage}
+														</Menu.Item>
+													</Menu>
+												</Table.Footer>
+											)}
+											{paginated && (
+												<Menu
+													floated='right'
+													pagination
+													style={{
+														marginBottom: '10px',
+														maxWidth: '315px',
+														width: `${tableWidth < 350 ? 250 : tableWidth}px`,
+														overflowX: 'auto',
+													}}
+												>
+													{range.map((el, index) => (
+														<Menu.Item
+															key={`menu-item-${el}`}
+															onClick={() => {
+																if (!isNaN(el)) setPage(el)
+															}}
+															index={el}
+															style={{
+																backgroundColor:
+																	page === (!isNaN(el) && el) && '#1e56aa15',
+															}}
+														>
+															{el}
+														</Menu.Item>
+													))}
+												</Menu>
+											)}
+										</Table.Footer>
+									</Grid.Column>
+								</Grid.Row>
+							</Grid>
+						</div>
 					</>
 				)}
 			</>
@@ -787,6 +816,7 @@ PaginatedTable.propTypes = {
 	loading: PropTypes.bool,
 	paginated: PropTypes.bool,
 	height: PropTypes.number,
+	width: PropTypes.number,
 	additionalActionButtons: PropTypes.arrayOf(
 		PropTypes.shape({
 			name: PropTypes.string,
@@ -799,7 +829,7 @@ PaginatedTable.propTypes = {
 			label: PropTypes.string,
 			icon: PropTypes.string,
 			action: PropTypes.func,
-			disabled: PropTypes.bool
+			disabled: PropTypes.bool,
 		})
 	),
 	saveButtonText: PropTypes.string,
