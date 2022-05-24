@@ -14,7 +14,7 @@ import {
 } from 'semantic-ui-react'
 
 //Utils
-import { formatColumn, getObjectProp, getUniqArray } from '../utils/index'
+import { formatColumn, getObjectProp, getUniqArray, processValue } from '../utils/index'
 
 // External Libraries
 import _ from 'lodash'
@@ -47,7 +47,7 @@ const ColumnFilterCard = (props) => {
 			let value = null
 			switch (column.type) {
 				case 'select':
-					const optionValue = getObjectProp(option, column.accessor)
+					const optionValue = processValue(getObjectProp(option, column.accessor), column)
 					if (optionValue) {
 						value = column?.options.find(
 							(selectableOption) => selectableOption.value == optionValue
@@ -58,7 +58,7 @@ const ColumnFilterCard = (props) => {
 					value = formatColumn('date', getObjectProp(option, column.accessor))
 					break
 				default:
-					value = getObjectProp(option, column.accessor)
+					value = processValue(getObjectProp(option, column.accessor), column)
 					break
 			}
 			return {
@@ -108,8 +108,8 @@ const ColumnFilterCard = (props) => {
 								return option
 							case 'no':
 								return !option
-							default:
-								return true
+							default: 
+								break
 						}
 					default:
 						break

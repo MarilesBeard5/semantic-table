@@ -24,7 +24,7 @@ const renderCell = (
 			case 'text':
 				return (
 					<input
-						className="InputField"
+						className='InputField'
 						type={type}
 						value={value ? value : ''}
 						placeholder={column.placeholder}
@@ -41,7 +41,7 @@ const renderCell = (
 			case 'currency':
 				return (
 					<Cleave
-						className="InputField"
+						className='InputField'
 						value={value}
 						style={{ textAlign: 'right' }}
 						placeholder={column.placeholder}
@@ -73,11 +73,11 @@ const renderCell = (
 			case 'boolean':
 				return (
 					<input
-						className="InputField"
+						className='InputField'
 						type={'checkbox'}
-						checked={value}
+						checked={value == 'true' ? true : false}
 						onChange={(e) => {
-							let newValue = e.target.checked
+							let newValue = e.target.checked == true ? 'true' : 'false'
 							onEdit(newValue)
 						}}
 						onBlur={(e) => {
@@ -89,13 +89,15 @@ const renderCell = (
 			case 'select':
 				return (
 					<Select
-						className="InputField"
-						placeholder="Seleccione una opción"
+						className='InputField'
+						placeholder='Seleccione una opción'
 						options={column.options}
 						value={value ? value : ''}
 						search
 						compact
 						defaultOpen
+						upward={false}
+						pointing='top'
 						onChange={(e, data) => {
 							onEdit(data.value)
 						}}
@@ -108,7 +110,7 @@ const renderCell = (
 			case 'textarea':
 				return (
 					<TextArea
-						className="InputField"
+						className='InputField'
 						value={value}
 						placeholder={column.placeholder}
 						onChange={(e, opt) => {
@@ -123,8 +125,8 @@ const renderCell = (
 			case 'number':
 				return (
 					<input
-						className="InputField"
-						type="number"
+						className='InputField'
+						type='number'
 						value={value ? value : ''}
 						placeholder={column.placeholder}
 						onChange={(e) => {
@@ -141,8 +143,8 @@ const renderCell = (
 				return (
 					<div style={{ textAlign: 'center' }}>
 						<input
-							className="InputField"
-							type="color"
+							className='InputField'
+							type='color'
 							value={value ? value : ''}
 							placeholder={column.placeholder}
 							onChange={(e) => {
@@ -160,8 +162,8 @@ const renderCell = (
 			case 'two-factor':
 				return (
 					<input
-						className="InputField"
-						type="number"
+						className='InputField'
+						type='number'
 						value={value ? value : ''}
 						placeholder={column.placeholder}
 						onChange={(e) => {
@@ -184,7 +186,7 @@ const renderCell = (
 				const date = moment(value).format('YYYY-MM-DD')
 				return (
 					<input
-						className="InputField"
+						className='InputField'
 						value={date ? date : ''}
 						type={type}
 						onChange={(e) => {
@@ -240,7 +242,9 @@ const renderCell = (
 						? column.customBooleanText?.true
 						: column.customBooleanText?.false
 				} else {
-					return <Icon size="large" name={value == true ? 'check' : 'close'} />
+					return (
+						<Icon size='large' name={value == 'true' ? 'check' : 'close'} />
+					)
 				}
 			case 'textarea':
 				return (
@@ -266,7 +270,14 @@ const renderCell = (
 }
 
 const PaginatedTableCell = (props) => {
-	const { row, column, onEditCell, isEditable, setCanSave = false, isFocused = null } = props
+	const {
+		row,
+		column,
+		onEditCell,
+		isEditable,
+		setCanSave = false,
+		isFocused = null,
+	} = props
 
 	const inputRef = useRef(null)
 
@@ -300,14 +311,19 @@ const PaginatedTableCell = (props) => {
 
 	return (
 		<Header
-			as="h5"
+			as='h5'
 			style={{ height: '15px', cursor: isEditable && 'cell' }}
 			contentEditable={isEditable}
 			onFocus={() => {
 				setWillRenderCell(true)
 			}}
 		>
-			<Header.Content style={{ display: 'block', textAlign: column.type == 'boolean' && 'center' }}>
+			<Header.Content
+				style={{
+					display: 'block',
+					textAlign: column.type == 'boolean' && 'center',
+				}}
+			>
 				{renderCell(
 					column,
 					value,
@@ -315,7 +331,7 @@ const PaginatedTableCell = (props) => {
 					isEditable,
 					willRenderCell,
 					handleBlur,
-					inputRef,
+					inputRef
 				)}
 			</Header.Content>
 		</Header>
