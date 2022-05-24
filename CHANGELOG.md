@@ -1,4 +1,22 @@
-## v0.2.6 (2022-04-28) Latest
+## v0.2.8 (2022-05-16)
+---
+**[a1396e8](https://github.com/MarilesBeard5/semantic-table/commit/a1396e8fc26af599ce86efcfb273305028f28e0b)**
+
+**[153a720](https://github.com/MarilesBeard5/semantic-table/commit/153a720a68e461cc65e15b51824a064425d99c2c)**
+
+**[0185567](https://github.com/MarilesBeard5/semantic-table/commit/01855676e234500906de33fea8996c7cf4c10362)**
+### Features
+* Added additional header action buttons
+* Added records per page label
+* Added prop to allow saving on external manipulation
+
+### Dependencies
+
+### Bugs
+* Fixed rows to identify edition on additional action save
+* Fixed logical rendering of filter card options through checked property to allow external controlling
+
+## v0.2.6 (2022-04-28)
 ---
 **[b194e31](https://github.com/MarilesBeard5/semantic-table/commit/b194e310b8c8e5c9a3c7c1fa35bfe979dafee8cc)**
 
