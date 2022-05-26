@@ -305,7 +305,10 @@ const PaginatedTableCell = (props) => {
 	}
 
 	const handleBlur = () => {
-		onEditCell(value, row, column)
+		let result = onEditCell(value, row, column)
+		if (result === false) {
+			setValue(getObjectProp(row, column.accessor))
+		}
 		setWillRenderCell(false)
 	}
 

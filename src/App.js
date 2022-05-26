@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { useEffect, useState } from 'react'
-import { Button, Grid, Segment } from 'semantic-ui-react'
+import { Button, Grid, Segment, Tab } from 'semantic-ui-react'
 import './index.css'
 import PaginatedTable from './lib/components/PaginatedTable'
 import { generateRows } from './lib/utils/fakes'
@@ -27,223 +27,134 @@ const options = [
 function App() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [data, setData] = useState(generateRows(350, 560, clientsSchema))
+	const [canSave, setCanSave] = useState(false)
+
 	useEffect(() => {
 		setIsLoading(true)
 		setTimeout(() => {
 			setIsLoading(false)
 		}, 1500)
 	}, [data])
+
+	const panes = [
+		{
+			menuItem: 'Tab 1',
+			render: () => (
+				<div className='PageContainer'>
+					<Button
+						content='Recargar Datos'
+						type='button'
+						onClick={() => {
+							setData(generateRows(350, 560, clientsSchema))
+							setCanSave(true)
+						}}
+					/>
+					<PaginatedTable
+						loading={isLoading}
+						title='Example'
+						hideRemoveFiltersButton={true}
+						onCancel={() => {
+							setCanSave(false)
+						}}
+						enableExternalSave={canSave}
+						onSave={true}
+						onAddRow={(id) => ({
+							id: id,
+							name: faker.fake(
+								'{{company.companyName}} {{company.companySuffix}}'
+							),
+							email: faker.fake('{{internet.email}}'),
+							date: faker.fake('{{date.between}}'),
+						})}
+						rows={data}
+						onInnerUpdate={(rows) => {
+							console.log(rows)
+						}}
+						rowLimit={20}
+						actionsActive={true}
+						actionsWidth={125}
+						onSelect={(row) => {
+							console.log(row)
+						}}
+						onDelete={(deletedRow) => {
+							console.log(deletedRow)
+						}}
+						onEditCell={({ row, column, value }) => {
+							console.log(row)
+							console.log(column)
+							console.log(value)
+						}}
+						additionalHeaderButtons={[
+							{
+								label: 'Prueba',
+								icon: 'search',
+								action: (rows) => {
+									console.log(rows)
+								},
+							},
+						]}
+						columns={[
+							{
+								width: 250,
+								Header: 'Code',
+								accessor: 'id',
+								filterable: true,
+								editable: false,
+							},
+							{
+								width: 225,
+								Header: 'Name',
+								accessor: 'name',
+								filterable: true,
+								editable: true,
+							},
+							{
+								width: 225,
+								Header: 'Email',
+								accessor: 'email',
+								filterable: true,
+								editable: true,
+							},
+							{
+								width: 225,
+								Header: 'Type',
+								accessor: 'type',
+								filterable: true,
+								editable: true,
+								type: 'select',
+								options: options,
+							},
+							{
+								width: 225,
+								Header: 'Date',
+								accessor: 'date',
+								type: 'date',
+								filterable: true,
+								editable: true,
+							},
+							{
+								width: 225,
+								Header: 'Checked',
+								accessor: 'processed',
+								type: 'boolean',
+								filterable: true,
+								editable: true,
+							},
+						]}
+					/>
+				</div>
+			),
+		},
+		{
+			menuItem: 'Tab 2',
+			render: () => <></>,
+		},
+	]
+
 	return (
 		<div className='PageContainer'>
 			<Segment secondary>
-				<Grid divided>
-					<Grid.Row columns={2}>
-						<Grid.Column width={8}></Grid.Column>
-						<Grid.Column width={8}>
-							<Button
-								content='Recargar Datos'
-								type='button'
-								onClick={() => {
-									setData(generateRows(50, 70, clientsSchema))
-								}}
-							/>
-							<PaginatedTable
-								loading={isLoading}
-								title='Example'
-								hideRemoveFiltersButton={true}
-								onCancel={true}
-								onSave={true}
-								onAddRow={(id) => ({
-									id: id,
-									name: faker.fake(
-										'{{company.companyName}} {{company.companySuffix}}'
-									),
-									email: faker.fake('{{internet.email}}'),
-									date: faker.fake('{{date.between}}'),
-								})}
-								rows={data}
-								height={175}
-								width={875}
-								rowLimit={20}
-								actionsActive={true}
-								actionsWidth={125}
-								onSelect={(row) => {
-									console.log(row)
-								}}
-								enableExternalSave={false}
-								onDelete={(deletedRow) => {
-									console.log(deletedRow)
-								}}
-								onEditCell={({ row, column, value }) => {
-									console.log(row)
-									console.log(column)
-									console.log(value)
-								}}
-								additionalHeaderButtons={[
-									{
-										label: 'Prueba',
-										icon: 'search',
-										action: (rows) => {
-											console.log(rows)
-										},
-									},
-								]}
-								columns={[
-									{
-										width: 250,
-										Header: 'Code',
-										accessor: 'id',
-										filterable: true,
-										editable: false,
-									},
-									{
-										width: 225,
-										Header: 'Name',
-										accessor: 'name',
-										filterable: true,
-										editable: true,
-									},
-									{
-										width: 225,
-										Header: 'Email',
-										accessor: 'email',
-										filterable: true,
-										editable: true,
-									},
-									{
-										width: 225,
-										Header: 'Type',
-										accessor: 'type',
-										filterable: true,
-										editable: true,
-										type: 'select',
-										options: options,
-									},
-									{
-										width: 225,
-										Header: 'Date',
-										accessor: 'date',
-										type: 'date',
-										filterable: true,
-										editable: true,
-									},
-									{
-										width: 225,
-										Header: 'Checked',
-										accessor: 'processed',
-										type: 'boolean',
-										filterable: true,
-										editable: true,
-									},
-								]}
-							/>
-						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row columns={2}>
-						<Grid.Column width={8}>
-							<Button
-								content='Recargar Datos'
-								type='button'
-								onClick={() => {
-									setData(generateRows(50, 70, clientsSchema))
-								}}
-							/>
-							<PaginatedTable
-								loading={isLoading}
-								title='Example'
-								hideRemoveFiltersButton={true}
-								showRecords
-								showRecordsPerPage
-								onCancel={true}
-								onSave={true}
-								onAddRow={(id) => ({
-									id: id,
-									name: faker.fake(
-										'{{company.companyName}} {{company.companySuffix}}'
-									),
-									email: faker.fake('{{internet.email}}'),
-									date: faker.fake('{{date.between}}'),
-								})}
-								rows={data}
-								height={175}
-								width={875}
-								rowLimit={20}
-								actionsActive={true}
-								actionsWidth={125}
-								onSelect={(row) => {
-									console.log(row)
-								}}
-								enableExternalSave={false}
-								onDelete={(deletedRow) => {
-									console.log(deletedRow)
-								}}
-								onEditCell={({ row, column, value }) => {
-									console.log(row)
-									console.log(column)
-									console.log(value)
-								}}
-								additionalHeaderButtons={[
-									{
-										label: 'Prueba',
-										icon: 'search',
-										action: (rows) => {
-											console.log(rows)
-										},
-									},
-								]}
-								columns={[
-									{
-										width: 250,
-										Header: 'Code',
-										accessor: 'id',
-										filterable: true,
-										editable: false,
-									},
-									{
-										width: 225,
-										Header: 'Name',
-										accessor: 'name',
-										filterable: true,
-										editable: true,
-									},
-									{
-										width: 225,
-										Header: 'Email',
-										accessor: 'email',
-										filterable: true,
-										editable: true,
-									},
-									{
-										width: 225,
-										Header: 'Type',
-										accessor: 'type',
-										filterable: true,
-										editable: true,
-										type: 'select',
-										options: options,
-									},
-									{
-										width: 225,
-										Header: 'Date',
-										accessor: 'date',
-										type: 'date',
-										filterable: true,
-										editable: true,
-									},
-									{
-										width: 225,
-										Header: 'Checked',
-										accessor: 'processed',
-										type: 'boolean',
-										filterable: true,
-										editable: true,
-									},
-								]}
-							/>
-						</Grid.Column>
-						<Grid.Column width={8}></Grid.Column>
-					</Grid.Row>
-				</Grid>
+				<Tab panes={panes} menu={{ pointing: true, secondary: true }} />
 			</Segment>
 		</div>
 	)

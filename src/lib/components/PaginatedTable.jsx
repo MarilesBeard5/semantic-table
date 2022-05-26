@@ -22,7 +22,6 @@ import PaginatedTableCell from './PaginatedTableCell'
 
 //Utils
 import {
-	calculateSimpleTotal,
 	getObjectProp,
 	getSortedArray,
 	processValue,
@@ -32,17 +31,15 @@ import {
 //External
 import _ from 'lodash'
 import { CSVLink } from 'react-csv'
-import Decimal from 'decimal.js'
 import moment from 'moment'
 
 //Virtualized Rows Size
 import { useWindowDimensions } from './WindowSize'
+import Pagination from './Pagination'
 
 const rowActionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
 const tableActionButton =
 	`ui blue basic button ${styles.Bordered}` + ' ' + `${styles.shadowOnHover}`
-
-const DOTS = '...'
 
 const PaginatedTable = (props) => {
 	const {
@@ -78,6 +75,7 @@ const PaginatedTable = (props) => {
 		numberOfRecordsPerPageText = 'En Página: ',
 		hideRemoveFiltersButton = false,
 		enableExternalSave = false,
+		onInnerUpdate = null,
 	} = props
 
 	// Inner States
@@ -89,7 +87,6 @@ const PaginatedTable = (props) => {
 	const [sortAccessor, setSortAccessor] = useState(null)
 	const [page, setPage] = useState(1)
 	const [slice, setSlice] = useState([])
-	const [range, setRange] = useState([])
 
 	const [focused, setFocused] = useState({
 		condition: false,
@@ -103,14 +100,6 @@ const PaginatedTable = (props) => {
 		return props.height ? props.height : innerHeight / 2
 	}, [props.height, innerHeight])
 
-	const tableWidth = useMemo(() => {
-		return props.width
-			? props.width
-			: calculateSimpleTotal(columns, 'width').plus(
-					new Decimal(actionsWidth + 25)
-			  )
-	}, [props.width, columns])
-
 	/**
 	 * =====================================================================
 	 * LOGICA
@@ -122,6 +111,10 @@ const PaginatedTable = (props) => {
 		setFilteredRows(localRows)
 		setRows(localRows)
 	}, [props.rows])
+
+	useEffect(() => {
+		onInnerUpdate && typeof onInnerUpdate == 'function' && onInnerUpdate(rows)
+	}, [rows])
 
 	const renderByFilter = (
 		{ accessor, type },
@@ -153,27 +146,32 @@ const PaginatedTable = (props) => {
 	}
 
 	const onBlurRow = (value, row, column) => {
-		let newRow = {}
 		let newRows = []
 		const oldValue = processValue(getObjectProp(row, column.accessor), column)
+		let result = true
 		if (oldValue !== value) {
-			newRows = filteredRows.map((r) => {
-				if (row.id === r.id) {
-					newRow = {
-						...r,
-						[column.accessor]: value,
+			let newRow = filteredRows.find((r) => row.id === r.id)
+			newRow = { ...row, [column.accessor]: value }
+			if (onEditCell && typeof onEditCell == 'function') {
+				result = onEditCell({
+					row: newRow,
+					column,
+					value,
+				})
+			}
+			if (result !== false) {
+				newRows = filteredRows.map((r) => {
+					if (row.id === r.id) {
+						return newRow
 					}
-
-					if (onEditCell) {
-						onEditCell({ row: newRow, column, value })
-					}
-					return newRow
-				}
-				return r
-			})
-			setCanSave(true)
-			setFilteredRows(newRows)
-			setRows(newRows)
+					return r
+				})
+				setCanSave(true)
+				setFilteredRows(newRows)
+				setRows(newRows)
+			} else {
+				return false
+			}
 		}
 	}
 
@@ -188,13 +186,16 @@ const PaginatedTable = (props) => {
 	}
 
 	const onRowDelete = (row) => {
-		const truncatedData = rows.filter((r) => r.id !== row.id)
+		let result = true
 		if (onDelete && typeof onDelete == 'function') {
-			onDelete(row)
+			result = onDelete(row)
 		}
-		setRows(truncatedData)
-		setFilteredRows(truncatedData)
-		setCanSave(true)
+		if (result !== false) {
+			const truncatedData = rows.filter((r) => r.id !== row.id)
+			setRows(truncatedData)
+			setFilteredRows(truncatedData)
+			setCanSave(true)
+		}
 	}
 
 	const onSaveRows = () => {
@@ -266,70 +267,20 @@ const PaginatedTable = (props) => {
 	 * =====================================================================
 	 */
 
-	useEffect(() => {
-		if (slice.length < 1 && page !== 1) {
-			setPage(page - 1)
-		}
-	}, [slice, page])
-
-	const getRange = (start, end) => {
-		let length = end - start + 1
-		return Array.from({ length }, (_, idx) => idx + start)
+	// Set external states new values to enable re-rendering
+	const onPageChanged = ({ currentPage, records }) => {
+		setPage(currentPage)
+		setFilteredRows(records)
+		return currentPage
 	}
 
-	const calculatedRange = useMemo(() => {
-		const limit = rowLimit
-		const length = filteredRows.filter((row) => row.checked != false).length
-		const totalPageCount = Math.ceil(length / limit)
-
-		// Pages count is determined as siblingCount + firstPage + lastPage + currentPage + 2*DOTS
-		const siblingCount = 1
-		const totalPageNumbers = siblingCount + 5
-
-		if (totalPageNumbers >= totalPageCount) {
-			return getRange(1, totalPageCount)
-		}
-
-		const leftSiblingIndex = Math.max(page - siblingCount, 1)
-		const rightSiblingIndex = Math.min(page + siblingCount, totalPageCount)
-
-		const shouldShowLeftDots = leftSiblingIndex > 2
-		const shouldShowRightDots = rightSiblingIndex < totalPageCount - 2
-
-		const firstPageIndex = 1
-		const lastPageIndex = totalPageCount
-
-		if (!shouldShowLeftDots && shouldShowRightDots) {
-			let leftItemCount = 3 + 2 * siblingCount
-			let leftRange = getRange(1, leftItemCount)
-
-			return [...leftRange, DOTS, totalPageCount]
-		}
-
-		if (shouldShowLeftDots && !shouldShowRightDots) {
-			let rightItemCount = 3 + 2 * siblingCount
-			let rightRange = getRange(
-				totalPageCount - rightItemCount + 1,
-				totalPageCount
-			)
-			return [firstPageIndex, DOTS, ...rightRange]
-		}
-
-		if (shouldShowLeftDots && shouldShowRightDots) {
-			let middleRange = getRange(leftSiblingIndex, rightSiblingIndex)
-			return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex]
-		}
-	}, [filteredRows, rowLimit, page])
-
+	// Sync slice and rows to enable re-render
 	useEffect(() => {
-		if (paginated === true) {
-			setRange(calculatedRange)
-			const slicedData = filteredRows
-				.filter((row) => row.checked != false)
-				.slice((page - 1) * rowLimit, page * rowLimit)
-			setSlice(slicedData)
+		if (paginated != false) {
+			const offset = (page - 1) * rowLimit
+			setSlice(filteredRows.slice(offset, offset + rowLimit))
 		}
-	}, [filteredRows, page, calculatedRange, rowLimit, paginated, setSlice])
+	}, [page, filteredRows, rowLimit, setSlice])
 
 	/**
 	 * ==================================================
@@ -506,6 +457,9 @@ const PaginatedTable = (props) => {
 	return (
 		<>
 			<>
+				{
+					//Header buttons
+				}
 				<Grid stackable padded>
 					<Grid.Row
 						verticalAlign='middle'
@@ -543,7 +497,7 @@ const PaginatedTable = (props) => {
 								type='button'
 								icon='times'
 								content={cancelButtonText}
-								disabled={!canSave}
+								disabled={!canSave && !enableExternalSave}
 							/>
 						)}
 						{onAdd && (
@@ -625,7 +579,7 @@ const PaginatedTable = (props) => {
 						<div
 							style={{
 								maxHeight: innerHeight / 1.35,
-								width: `${tableWidth}px`,
+								width: `auto`,
 								height: tableHeight,
 								overflowX: 'auto',
 							}}
@@ -703,7 +657,7 @@ const PaginatedTable = (props) => {
 						</div>
 						<div
 							style={{
-								width: tableWidth,
+								width: 'auto',
 								overflowX: 'auto',
 							}}
 						>
@@ -741,32 +695,13 @@ const PaginatedTable = (props) => {
 												</Table.Footer>
 											)}
 											{paginated && (
-												<Menu
-													floated='right'
-													pagination
-													style={{
-														marginBottom: '10px',
-														maxWidth: '315px',
-														width: `${tableWidth < 350 ? 250 : tableWidth}px`,
-														overflowX: 'auto',
-													}}
-												>
-													{range.map((el, index) => (
-														<Menu.Item
-															key={`menu-item-${el}`}
-															onClick={() => {
-																if (!isNaN(el)) setPage(el)
-															}}
-															index={el}
-															style={{
-																backgroundColor:
-																	page === (!isNaN(el) && el) && '#1e56aa15',
-															}}
-														>
-															{el}
-														</Menu.Item>
-													))}
-												</Menu>
+												<Pagination
+													width={innerWidth}
+													records={filteredRows}
+													rowLimit={rowLimit}
+													pageNeighbours={1}
+													onPageChanged={onPageChanged}
+												/>
 											)}
 										</Table.Footer>
 									</Grid.Column>
@@ -783,12 +718,12 @@ const PaginatedTable = (props) => {
 
 PaginatedTable.propTypes = {
 	title: PropTypes.string,
-	rows: PropTypes.array,
+	rows: PropTypes.array.isRequired,
 	columns: PropTypes.arrayOf(
 		PropTypes.shape({
-			width: PropTypes.number,
-			Header: PropTypes.string,
-			accessor: PropTypes.string,
+			width: PropTypes.number.isRequired,
+			Header: PropTypes.string.isRequired,
+			accessor: PropTypes.string.isRequired,
 			type: PropTypes.string,
 			editable: PropTypes.bool,
 			filterable: PropTypes.bool,
@@ -801,7 +736,7 @@ PaginatedTable.propTypes = {
 				})
 			),
 		})
-	),
+	).isRequired,
 	actionsActive: PropTypes.bool,
 	actionsWidth: PropTypes.number,
 	onSave: PropTypes.func,
@@ -816,7 +751,6 @@ PaginatedTable.propTypes = {
 	loading: PropTypes.bool,
 	paginated: PropTypes.bool,
 	height: PropTypes.number,
-	width: PropTypes.number,
 	additionalActionButtons: PropTypes.arrayOf(
 		PropTypes.shape({
 			name: PropTypes.string,
@@ -847,6 +781,7 @@ PaginatedTable.propTypes = {
 	showRecordsPerPage: PropTypes.bool,
 	numberOfRecordsPerPageText: PropTypes.string,
 	enableExternalSave: PropTypes.bool,
+	onInnerUpdate: PropTypes.func,
 }
 
 export default PaginatedTable
