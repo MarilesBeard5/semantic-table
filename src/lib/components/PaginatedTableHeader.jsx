@@ -67,7 +67,7 @@ const PaginatedTableHeader = (props) => {
 						}
 						on="click"
 						pinned
-						position="bottom left"
+						position="bottom center"
 					/>
 				)}
 			</th>
