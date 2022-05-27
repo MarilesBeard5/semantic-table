@@ -15,7 +15,6 @@ This component depends on the following packages
 - [Cleave JS](https://nosir.github.io/cleave.js/).
 - [React CSV](https://github.com/react-csv/react-csv).
 - [Moment JS](https://momentjs.com)
-- [Decimal JS](https://mikemcl.github.io/decimal.js/)
 
 ## Basic Example
 

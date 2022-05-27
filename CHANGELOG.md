@@ -1,3 +1,28 @@
+## v0.3.4 (2022-05-26) Latest
+
+### Features
+- Added Pagination Component to fix previous pagination bugs and improve stability
+- Added external control functions to avoid inner re-rendering and state update, this is to allow controlled updating of table rows
+
+### Dependencies
+- REMOVED [Decimal JS](https://mikemcl.github.io/decimal.js/)
+
+### Bugs
+* Fixed card pointing direction
+* Changed container width calculation to automatic
+
+## v0.3.2 (2022-05-24)
+---
+**[0bd8be9](https://github.com/MarilesBeard5/semantic-table/commit/0bd8be94da4545d1200e899780159ef33f49bde7)**
+
+### Features
+* Added decimal operations to allow better table width handling
+
+### Dependencies
+- [Decimal JS](https://mikemcl.github.io/decimal.js/)
+### Bugs
+* Fixed boolean cell rendering on edition
+
 ## v0.2.8 (2022-05-16)
 ---
 **[a1396e8](https://github.com/MarilesBeard5/semantic-table/commit/a1396e8fc26af599ce86efcfb273305028f28e0b)**
