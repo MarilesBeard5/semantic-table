@@ -49,7 +49,7 @@ const Pagination = (props) => {
 	const fetchPageNumbers = () => {
 		/**
 		 * totalNumbers: the total page numbers to show on the control
-		 * totalBlocks: totalNumbers + 2 to cover for the left(<) and right(>) controls
+		 * totalBlocks: totalNumbers + 2 to cover for the left(...) and right(...) symbols
 		 */
 		const totalNumbers = pageNeighbours * 2 + 3
 		const totalBlocks = totalNumbers + 2
@@ -101,7 +101,7 @@ const Pagination = (props) => {
 
 	const goToPage = (page) => {
 		const { onPageChanged = (f) => f } = props
-		const currentPage = Math.max(0, Math.min(page, totalPages))
+		const currentPage = totalPages <= 0 ? 1 : Math.max(0, Math.min(page, totalPages))
 		const paginationData = {
 			currentPage,
 			records,

@@ -275,7 +275,6 @@ const PaginatedTableCell = (props) => {
 		column,
 		onEditCell,
 		isEditable,
-		setCanSave = false,
 		isFocused = null,
 	} = props
 

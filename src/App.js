@@ -70,7 +70,7 @@ function App() {
 						onInnerUpdate={(rows) => {
 							console.log(rows)
 						}}
-						rowLimit={20}
+						rowLimit={25}
 						actionsActive={true}
 						actionsWidth={125}
 						onSelect={(row) => {
