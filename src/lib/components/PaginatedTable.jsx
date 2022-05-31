@@ -328,6 +328,10 @@ const PaginatedTable = (props) => {
 
 	//Actions Column
 	const renderActionsColumn = (row) => {
+		const _additionalActionButtons =
+			typeof additionalActionButtons === 'function'
+				? additionalActionButtons(row)
+				: additionalActionButtons
 		return (
 			<td
 				className='ui center aligned'
@@ -375,7 +379,7 @@ const PaginatedTable = (props) => {
 						on='hover'
 					/>
 				)}
-				{additionalActionButtons.map((action, index) => {
+				{_additionalActionButtons.map((action, index) => {
 					return (
 						<Popup
 							key={`action-button-${index}=${action.name}`}
