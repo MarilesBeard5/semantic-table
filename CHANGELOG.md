@@ -1,4 +1,31 @@
-## v0.3.4 (2022-05-26) Latest
+## v0.3.6 (2022-06-1) Latest
+---
+### Features
+- Added **permanentRender** prop to allow perpetual rendering of input on cells, usage should be use with caution as could lead to
+  performance issues
+
+### Dependencies
+
+### Bugs
+
+## v0.3.5 (2022-05-31)
+---
+**[9337d8f](https://github.com/MarilesBeard5/semantic-table/commit/9337d8f7d12a16f4d072707828d12a9b56df41ed)**
+### Features
+- Added row data to additionalActionButtons to conditionally render as a function, if a functions is given, it will expect the callback to return the
+  actual array of options
+
+### Dependencies
+
+### Bugs
+
+## v0.3.4 (2022-05-26)
+---
+**[a10815f](https://github.com/MarilesBeard5/semantic-table/commit/a10815fae875af2ea59f0ecef3a35165784bd52b)**
+
+**[d821cbb](https://github.com/MarilesBeard5/semantic-table/commit/d821cbb2d379e0c686a5f598ef3a4f005def2a6b)**
+
+**[ca58c99](https://github.com/MarilesBeard5/semantic-table/commit/ca58c99454ccae4c2bca572e851dac9dd7802c43)**
 
 ### Features
 - Added Pagination Component to fix previous pagination bugs and improve stability
@@ -129,6 +156,7 @@
 * Fixed add new row problem on empty table
 
 ## v0.1.0 (2022-04-08)
+---
 **[c2f1804](https://github.com/MarilesBeard5/semantic-table/commit/c2f1804bf64ac38b3f0e73a165a8e77b53a6d144)**
 
 ### Features

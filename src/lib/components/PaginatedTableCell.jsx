@@ -19,7 +19,7 @@ const renderCell = (
 ) => {
 	const { type = 'text' } = column
 
-	if (isEditable && willRenderCell) {
+	if ((isEditable && willRenderCell) || column.permanentRender) {
 		switch (type) {
 			case 'text':
 				return (
@@ -270,13 +270,7 @@ const renderCell = (
 }
 
 const PaginatedTableCell = (props) => {
-	const {
-		row,
-		column,
-		onEditCell,
-		isEditable,
-		isFocused = null,
-	} = props
+	const { row, column, onEditCell, isEditable, isFocused = null } = props
 
 	const inputRef = useRef(null)
 
@@ -341,13 +335,25 @@ const PaginatedTableCell = (props) => {
 }
 
 PaginatedTableCell.propTypes = {
-	column: PropTypes.shape({
-		width: PropTypes.number,
-		Header: PropTypes.string,
-		accessor: PropTypes.string,
-		type: PropTypes.string,
-		editable: PropTypes.bool,
-	}),
+	columns: PropTypes.arrayOf(
+		PropTypes.shape({
+			width: PropTypes.number.isRequired,
+			Header: PropTypes.string.isRequired,
+			accessor: PropTypes.string.isRequired,
+			type: PropTypes.string,
+			editable: PropTypes.bool,
+			filterable: PropTypes.bool,
+			permanentRender: PropTypes.bool,
+			options: PropTypes.arrayOf(
+				PropTypes.shape({
+					Header: PropTypes.string,
+					key: PropTypes.string,
+					value: PropTypes.any,
+					color: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+				})
+			),
+		})
+	).isRequired,
 	onEditCell: PropTypes.func,
 	row: PropTypes.object,
 	value: PropTypes.any,

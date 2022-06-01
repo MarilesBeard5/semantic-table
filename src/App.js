@@ -84,15 +84,23 @@ function App() {
 							console.log(column)
 							console.log(value)
 						}}
-						additionalHeaderButtons={[
-							{
-								label: 'Prueba',
-								icon: 'search',
-								action: (rows) => {
-									console.log(rows)
-								},
-							},
-						]}
+						additionalActionButtons={(row) => {
+							if (row.processed == 'true') {
+								return [
+									{
+										name: 'Prueba',
+										icon: 'search',
+										action: (row) => {
+											console.log(row)
+										},
+									},
+								]
+							} else {
+								return [
+									
+								]
+							}
+						}}
 						columns={[
 							{
 								width: 250,
@@ -139,6 +147,7 @@ function App() {
 								type: 'boolean',
 								filterable: true,
 								editable: true,
+								permanentRender: true,
 							},
 						]}
 					/>

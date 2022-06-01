@@ -731,6 +731,7 @@ PaginatedTable.propTypes = {
 			type: PropTypes.string,
 			editable: PropTypes.bool,
 			filterable: PropTypes.bool,
+			permanentRender: PropTypes.bool,
 			options: PropTypes.arrayOf(
 				PropTypes.shape({
 					Header: PropTypes.string,

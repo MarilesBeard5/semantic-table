@@ -338,15 +338,16 @@ const additionalActionButtons = [
 
 Each column will have the following structure:
 
-| Prop       | Type    | Description                                                                                                                        |
-| ---------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| width      | numeric | The column's width, data exceeding this width will trigger an horizontal scrollbar                                                 |
-| Header     | string  | The column's title to be displayed on the table header                                                                             |
-| accessor   | string  | The name of the row attribute that holds the value to be displayed                                                                 |
-| type       | string  | Format and input type that the column will have, can be one of: **text, currency, boolean, select, textarea, number, color, date** |
-| options    | array   | If the type is **select**, then an options array has to be provided (**see the structure below**)                                  |
-| editable   | boolean | Whether the column can be edited or not                                                                                            |
-| filterable | boolean | Whether the column can be filtered or not                                                                                          |
+| Prop            | Type    | Description                                                                                                                        |
+| --------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| width           | numeric | The column's width, data exceeding this width will trigger an horizontal scrollbar                                                 |
+| Header          | string  | The column's title to be displayed on the table header                                                                             |
+| accessor        | string  | The name of the row attribute that holds the value to be displayed                                                                 |
+| type            | string  | Format and input type that the column will have, can be one of: **text, currency, boolean, select, textarea, number, color, date** |
+| options         | array   | If the type is **select**, then an options array has to be provided (**see the structure below**)                                  |
+| editable        | boolean | Whether the column can be edited or not                                                                                            |
+| filterable      | boolean | Whether the column can be filtered or not                                                                                          |
+| permanentRender | boolean | Whether the column cell input will always be visible and not render the default label                                              |
 
 ### Column Options
 
