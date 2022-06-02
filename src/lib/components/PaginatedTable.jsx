@@ -128,8 +128,7 @@ const PaginatedTable = (props) => {
 		})
 
 		let renderedRows = newRows.map((row) => {
-			let currentRowValue =
-				type == 'select' ? row[accessor] : getObjectProp(row, accessor)
+			let currentRowValue = getObjectProp(row, accessor)
 			let found = options.find((option) => {
 				let foundRowValue = getObjectProp(option, accessor)
 				return currentRowValue === foundRowValue

@@ -1,5 +1,17 @@
-## v0.3.6 (2022-06-1) Latest
+## v0.3.7 (2022-06-2)
 ---
+**[a7dd716](https://github.com/MarilesBeard5/semantic-table/commit/a7dd716aa8dc46de6001c63e1ac2e32a2408ff0b)**
+
+### Features
+
+### Dependencies
+
+### Bugs
+- Fixed ColumnCard filtering for nested attributes of select type
+## v0.3.6 (2022-06-1)
+---
+**[a7dd716](https://github.com/MarilesBeard5/semantic-table/commit/a7dd716aa8dc46de6001c63e1ac2e32a2408ff0b)**
+
 ### Features
 - Added **permanentRender** prop to allow perpetual rendering of input on cells, usage should be use with caution as could lead to
   performance issues

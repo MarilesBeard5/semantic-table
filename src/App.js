@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Button, Grid, Segment, Tab } from 'semantic-ui-react'
 import './index.css'
 import PaginatedTable from './lib/components/PaginatedTable'
@@ -16,11 +16,11 @@ const clientsSchema = {
 const options = [
 	{
 		text: 'Foo',
-		value: 'foo',
+		value: '01',
 	},
 	{
 		text: 'Bar',
-		value: 'bar',
+		value: '02',
 	},
 ]
 
@@ -34,6 +34,15 @@ function App() {
 		setTimeout(() => {
 			setIsLoading(false)
 		}, 1500)
+	}, [data])
+
+	const memoizedData = useMemo(() => {
+		return (data ?? []).map(d => {
+			return {
+				...d,
+				type: options[Math.floor(Math.random()*options.length)].value
+			}
+		})
 	}, [data])
 
 	const panes = [
@@ -66,7 +75,7 @@ function App() {
 							email: faker.fake('{{internet.email}}'),
 							date: faker.fake('{{date.between}}'),
 						})}
-						rows={data}
+						rows={memoizedData}
 						onInnerUpdate={(rows) => {
 							console.log(rows)
 						}}
@@ -128,7 +137,7 @@ function App() {
 								Header: 'Type',
 								accessor: 'type',
 								filterable: true,
-								editable: true,
+								editable: false,
 								type: 'select',
 								options: options,
 							},
