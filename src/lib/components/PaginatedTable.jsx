@@ -277,7 +277,7 @@ const PaginatedTable = (props) => {
 	useEffect(() => {
 		if (paginated != false) {
 			const offset = (page - 1) * rowLimit
-			setSlice(filteredRows.slice(offset, offset + rowLimit))
+			setSlice(filteredRows.filter(row => row.checked != false).slice(offset, offset + rowLimit))
 		}
 	}, [page, filteredRows, rowLimit, setSlice])
 

@@ -40,7 +40,7 @@ function App() {
 		return (data ?? []).map(d => {
 			return {
 				...d,
-				type: options[Math.floor(Math.random()*options.length)].value
+				type: '01'
 			}
 		})
 	}, [data])
@@ -137,7 +137,7 @@ function App() {
 								Header: 'Type',
 								accessor: 'type',
 								filterable: true,
-								editable: false,
+								editable: true,
 								type: 'select',
 								options: options,
 							},

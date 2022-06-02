@@ -1,3 +1,13 @@
+## v0.3.8 (2022-06-2) Latest
+---
+
+### Features
+
+### Dependencies
+
+### Bugs
+- Fixed ColumnCard filtering for values not on first page
+
 ## v0.3.7 (2022-06-2)
 ---
 **[a7dd716](https://github.com/MarilesBeard5/semantic-table/commit/a7dd716aa8dc46de6001c63e1ac2e32a2408ff0b)**
@@ -8,6 +18,7 @@
 
 ### Bugs
 - Fixed ColumnCard filtering for nested attributes of select type
+
 ## v0.3.6 (2022-06-1)
 ---
 **[a7dd716](https://github.com/MarilesBeard5/semantic-table/commit/a7dd716aa8dc46de6001c63e1ac2e32a2408ff0b)**
