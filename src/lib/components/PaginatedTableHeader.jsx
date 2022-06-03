@@ -96,7 +96,7 @@ const PaginatedTableHeader = (props) => {
 
 	return (
 		<table
-			className={`ui fixed`  + ' ' + `${styles['primary-border']}` + ` very compact unstackable table`}
+			className={`ui fixed very compact unstackable table`}
 			style={{
 				display: 'inline-block',
 				tableLayout: 'fixed',

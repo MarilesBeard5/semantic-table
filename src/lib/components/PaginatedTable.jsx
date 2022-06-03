@@ -603,7 +603,7 @@ const PaginatedTable = (props) => {
 							/>
 
 							<Table
-								className='ui celled fixed single line very compact table'
+								className='ui celled fixed single line table'
 								style={{
 									display: 'block',
 									tableLayout: 'fixed',
