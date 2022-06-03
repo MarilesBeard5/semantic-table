@@ -55,7 +55,7 @@ export const processValue = (newValue, column) => {
 			let found = column?.options.find((option) => option.value === newValue)
 			return found ? found.value : null
 		case 'boolean':
-			return newValue == 'true' ? 'true' : 'false'
+			return (newValue == 'true' || newValue === true) ? 'true' : 'false'
 		default:
 			return newValue
 	}

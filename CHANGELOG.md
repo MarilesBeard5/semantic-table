@@ -7,6 +7,7 @@
 
 ### Bugs
 - Fixed ColumnCard filtering for values not on first page
+- Fixed true boolean values not being parsed correctly
 
 ## v0.3.7 (2022-06-2)
 ---
