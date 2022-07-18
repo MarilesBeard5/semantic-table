@@ -75,9 +75,9 @@ const renderCell = (
 					<input
 						className='InputField'
 						type={'checkbox'}
-						checked={value == 'true' ? true : false}
+						checked={value === 'true' ? true : false}
 						onChange={(e) => {
-							let newValue = e.target.checked == true ? 'true' : 'false'
+							let newValue = e.target.checked === true ? 'true' : 'false'
 							onEdit(newValue)
 						}}
 						onBlur={(e) => {
@@ -243,7 +243,7 @@ const renderCell = (
 						: column.customBooleanText?.false
 				} else {
 					return (
-						<Icon size='large' name={value == 'true' ? 'check' : 'close'} />
+						<Icon size='large' name={value === 'true' ? 'check' : 'close'} />
 					)
 				}
 			case 'textarea':
@@ -281,7 +281,7 @@ const PaginatedTableCell = (props) => {
 		const currentValue = getObjectProp(row, column.accessor)
 		const newValue = processValue(currentValue, column)
 		setValue(newValue)
-	}, [row, processValue, column])
+	}, [row, column])
 
 	useEffect(() => {
 		if (inputRef.current) {
@@ -291,7 +291,8 @@ const PaginatedTableCell = (props) => {
 
 	useEffect(() => {
 		isFocused(willRenderCell, row)
-	}, [willRenderCell])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [willRenderCell, row])
 
 	const onEdit = (newValue) => {
 		setValue(newValue)
@@ -310,6 +311,7 @@ const PaginatedTableCell = (props) => {
 			as='h5'
 			style={{ height: '15px', cursor: isEditable && 'cell' }}
 			contentEditable={isEditable}
+			suppressContentEditableWarning={true}
 			onFocus={() => {
 				setWillRenderCell(true)
 			}}
@@ -317,7 +319,7 @@ const PaginatedTableCell = (props) => {
 			<Header.Content
 				style={{
 					display: 'block',
-					textAlign: column.type == 'boolean' && 'center',
+					textAlign: column.type === 'boolean' && 'center',
 				}}
 			>
 				{renderCell(

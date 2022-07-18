@@ -17,7 +17,33 @@ import {
 import { formatColumn, getObjectProp, getUniqArray, processValue } from '../utils/index'
 
 // External Libraries
-import _ from 'lodash'
+
+const getOptionArray = (column, options) => {
+	return getUniqArray(options, column.accessor).map((option) => {
+		let value = null
+		switch (column.type) {
+			case 'select':
+				const optionValue = processValue(getObjectProp(option, column.accessor), column)
+				if (optionValue) {
+					value = column?.options.find(
+						(selectableOption) => selectableOption.value === optionValue
+					).text
+				}
+				break
+			case 'date':
+				value = formatColumn('date', getObjectProp(option, column.accessor))
+				break
+			default:
+				value = processValue(getObjectProp(option, column.accessor), column)
+				break
+		}
+		return {
+			label: value,
+			checked: option.checked !== false,
+			...option,
+		}
+	})
+}
 
 const ColumnFilterCard = (props) => {
 	const {
@@ -38,36 +64,9 @@ const ColumnFilterCard = (props) => {
 	const [canApply, setCanApply] = useState(false)
 
 	useEffect(() => {
-		const currentOptions = getOptionArray(column)
+		const currentOptions = getOptionArray(column, options)
 		setCurrentOptions(currentOptions)
-	}, [column])
-
-	const getOptionArray = (column) => {
-		return getUniqArray(options, column.accessor).map((option) => {
-			let value = null
-			switch (column.type) {
-				case 'select':
-					const optionValue = processValue(getObjectProp(option, column.accessor), column)
-					if (optionValue) {
-						value = column?.options.find(
-							(selectableOption) => selectableOption.value == optionValue
-						).text
-					}
-					break
-				case 'date':
-					value = formatColumn('date', getObjectProp(option, column.accessor))
-					break
-				default:
-					value = processValue(getObjectProp(option, column.accessor), column)
-					break
-			}
-			return {
-				label: value,
-				checked: option.checked != false,
-				...option,
-			}
-		})
-	}
+	}, [column, options])
 
 	const handleAscendSorting = (column) => {
 		setSortAccessor(column.accessor)
@@ -81,9 +80,9 @@ const ColumnFilterCard = (props) => {
 
 	const allOptionsChecked = useMemo(() => {
 		return currentOptions.every((option) => {
-			return option.checked != false
+			return option.checked !== false
 		})
-	}, [filteredOptions])
+	}, [currentOptions])
 
 	useEffect(() => {
 		if (JSON.stringify(currentOptions) !== JSON.stringify(filteredOptions))
@@ -111,6 +110,7 @@ const ColumnFilterCard = (props) => {
 							default: 
 								break
 						}
+						break
 					default:
 						break
 				}
@@ -118,15 +118,15 @@ const ColumnFilterCard = (props) => {
 			return true
 		})
 		setFilteredOptions(filteredLabeledOptions)
-	}, [filters, currentOptions])
+	}, [filters, currentOptions, column])
 
 	const handleCheckChange = (option) => {
 		setCurrentOptions((previousCurrentOptions) => {
 			let newOptions = previousCurrentOptions.map((prev) => {
-				if (option.id == prev.id) {
+				if (option.id === prev.id) {
 					return {
 						...prev,
-						checked: !(option.checked != false),
+						checked: !(option.checked !== false),
 					}
 				}
 				return prev
@@ -158,7 +158,7 @@ const ColumnFilterCard = (props) => {
 						onChange={(value) => {
 							handleCheckChange(item)
 						}}
-						checked={item.checked != false}
+						checked={item.checked !== false}
 					/>
 				</List.Item>
 			)
@@ -211,7 +211,7 @@ const ColumnFilterCard = (props) => {
 						onClick={(e) => {
 							handleAscendSorting(column)
 						}}
-						disabled={(sortOrder ?? 'ASC') == 'ASC' && sortAccessor != null}
+						disabled={(sortOrder ?? 'ASC') === 'ASC' && sortAccessor != null}
 					/>
 				}
 			/>
@@ -224,7 +224,7 @@ const ColumnFilterCard = (props) => {
 						onClick={(e) => {
 							handleDescendSorting(column)
 						}}
-						disabled={(sortOrder ?? 'DESC') == 'DESC' && sortAccessor != null}
+						disabled={(sortOrder ?? 'DESC') === 'DESC' && sortAccessor != null}
 					/>
 				}
 			/>

@@ -37,8 +37,9 @@ import moment from 'moment'
 import { useWindowDimensions } from './WindowSize'
 import Pagination from './Pagination'
 
+// eslint-disable-next-line no-useless-concat
 const rowActionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
-const tableActionButton =
+const tableActionButton = // eslint-disable-next-line no-useless-concat
 	`ui blue basic button ${styles.Bordered}` + ' ' + `${styles.shadowOnHover}`
 
 const PaginatedTable = (props) => {
@@ -114,7 +115,7 @@ const PaginatedTable = (props) => {
 
 	useEffect(() => {
 		onInnerUpdate && typeof onInnerUpdate == 'function' && onInnerUpdate(rows)
-	}, [rows])
+	}, [rows, onInnerUpdate])
 
 	const renderByFilter = (
 		{ accessor, type },
@@ -275,11 +276,11 @@ const PaginatedTable = (props) => {
 
 	// Sync slice and rows to enable re-render
 	useEffect(() => {
-		if (paginated != false) {
+		if (paginated !== false) {
 			const offset = (page - 1) * rowLimit
-			setSlice(filteredRows.filter(row => row.checked != false).slice(offset, offset + rowLimit))
+			setSlice(filteredRows.filter(row => row.checked !== false).slice(offset, offset + rowLimit))
 		}
-	}, [page, filteredRows, rowLimit, setSlice])
+	}, [page, filteredRows, rowLimit, setSlice, paginated])
 
 	/**
 	 * ==================================================
@@ -303,13 +304,10 @@ const PaginatedTable = (props) => {
 			accessors.push(c.accessor)
 		})
 		rowsToSend = filteredRows
-			.filter((row) => row.checked != false)
+			.filter((row) => row.checked !== false)
 			.map((r) => {
 				return columns.map((c) => {
-					if (accessors.includes(c.accessor)) {
-						let valueToSend = getObjectProp(r, c.accessor)
-						return valueToSend
-					}
+					return accessors.includes(c.accessor) ? getObjectProp(r, c.accessor) : null
 				})
 			})
 		data.push(headers)
@@ -443,12 +441,12 @@ const PaginatedTable = (props) => {
 	const hasRows = rows.length > 0 ? rows.length > 0 : props.rows.length > 0
 
 	const numberOfRecords = useMemo(() => {
-		return filteredRows.filter((r) => r.checked != false).length
+		return filteredRows.filter((r) => r.checked !== false).length
 	}, [filteredRows])
 
 	const recordsPerPage = useMemo(() => {
-		return paginated ? slice.filter((r) => r.checked != false).length : null
-	}, [slice])
+		return paginated ? slice.filter((r) => r.checked !== false).length : null
+	}, [slice, paginated])
 
 	const isFocused = (condition, row) => {
 		setFocused({
@@ -613,10 +611,10 @@ const PaginatedTable = (props) => {
 								definition
 								unstackable
 							>
-								{(paginated != false ? slice : filteredRows).map(
+								{(paginated !== false ? slice : filteredRows).map(
 									(row, rowIndex) => {
 										return (
-											row.checked != false && (
+											row.checked !== false && (
 												<tr
 													key={`row-${rowIndex}`}
 													className={`ui table row`}
@@ -639,7 +637,7 @@ const PaginatedTable = (props) => {
 																key={`column-${rowIndex + ' ' + index}`}
 																style={{
 																	overflow:
-																		column.type == 'select' && focused.condition
+																		column.type === 'select' && focused.condition
 																			? 'visible'
 																			: 'auto',
 																	width: `${column.width}px`,

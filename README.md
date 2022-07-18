@@ -1,5 +1,7 @@
 # Semantic Table
 
+## NEW! React 18 Support
+
 DataTable made with styled components from [React Semantic UI](https://react.semantic-ui.com).
 
 Installation:

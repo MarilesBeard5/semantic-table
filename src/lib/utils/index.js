@@ -55,7 +55,7 @@ export const processValue = (newValue, column) => {
 			let found = column?.options.find((option) => option.value === newValue)
 			return found ? found.value : null
 		case 'boolean':
-			return (newValue == 'true' || newValue === true) ? 'true' : 'false'
+			return (newValue === 'true' || newValue === true) ? 'true' : 'false'
 		default:
 			return newValue
 	}
@@ -139,7 +139,7 @@ export const uuid = function () {
     let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         let r = (dt + Math.random()*16)%16 | 0;
         dt = Math.floor(dt/16);
-        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        return (c ==='x' ? r :((r&0x3)|(0x8))).toString(16);
     });
     return uuid;
 }

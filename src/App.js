@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { useEffect, useState, useMemo } from 'react'
-import { Button, Grid, Segment, Tab } from 'semantic-ui-react'
+import { Button, Segment, Tab } from 'semantic-ui-react'
 import './index.css'
 import PaginatedTable from './lib/components/PaginatedTable'
 import { generateRows } from './lib/utils/fakes'
@@ -81,7 +81,7 @@ function App() {
 						}}
 						rowLimit={25}
 						actionsActive={true}
-						actionsWidth={125}
+						actionsWidth={150}
 						onSelect={(row) => {
 							console.log(row)
 						}}
@@ -94,7 +94,7 @@ function App() {
 							console.log(value)
 						}}
 						additionalActionButtons={(row) => {
-							if (row.processed == 'true') {
+							if (row.processed === 'true') {
 								return [
 									{
 										name: 'Prueba',

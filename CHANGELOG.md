@@ -1,4 +1,14 @@
-## v0.3.8 (2022-06-2) Latest
+## Major Version v1.0.1 Latest (2022-07-17)
+
+### Features
+- Added support for React 18
+
+### Dependencies
+- React 18
+
+### Bugs
+
+## v0.3.8 (2022-06-2)
 ---
 
 ### Features

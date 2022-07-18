@@ -8,6 +8,7 @@ import styles from '../styles/global.module.scss'
 //Components
 import ColumnFilterCard from './ColumnFilterCard'
 
+// eslint-disable-next-line no-useless-concat
 const actionButton = `${styles.IconButton}` + ' ' + `${styles.nonBordered}`
 
 const PaginatedTableHeader = (props) => {

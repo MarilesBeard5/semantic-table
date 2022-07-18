@@ -25,3 +25,7 @@ yarn-error.log*
 .vscode/launch.json
 
 install.Unix.sh
+
+.idea/
+
+yarn.lock

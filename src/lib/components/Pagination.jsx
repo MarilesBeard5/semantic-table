@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-import _ from 'lodash'
 import { Menu } from 'semantic-ui-react'
 
 const LEFT_PAGE = 'LEFT'
@@ -28,7 +27,7 @@ const Pagination = (props) => {
 	const [currentPage, setCurrentPage] = useState(1)
 
 	const totalRecords = useMemo(() => {
-		return records.filter((r) => r.checked != false).length
+		return records.filter((r) => r.checked !== false).length
 	}, [records])
 
 	const totalPages = useMemo(() => {
@@ -112,6 +111,7 @@ const Pagination = (props) => {
 
 	useEffect(() => {
 		goToPage(1)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	const handleClick = (page) => (evt) => {
@@ -120,7 +120,7 @@ const Pagination = (props) => {
 
 	return (
 		<>
-			{!totalRecords || !totalPages == 1 ? null : (
+			{!totalRecords || !totalPages === 1 ? null : (
 				<Menu
 					floated='right'
 					pagination
